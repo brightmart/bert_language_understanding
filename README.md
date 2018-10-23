@@ -11,6 +11,8 @@ implementation of Transformer and BERT official implementation coming soon, but 
 
 We will not try to replicate original papers, but instead to understand and apply main ideas to solve really problem.
 
+The majority part fo work here was done by another repository last year: <a href='https://github.com/brightmart/text_classification'>text classification</a>
+
 ## Short Description:
 Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
 
