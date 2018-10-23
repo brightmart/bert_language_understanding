@@ -1,6 +1,16 @@
 # bert_language_understanding
 Pre-training of Deep Bidirectional Transformers for Language Understanding
 
+This repository is trying to solve some language understanding problems using technology developed in recent years.
+ 
+It is/will be an implement of 'Attention Is All You Need'(Transformer) and 
+
+'Pre-training of Deep Bidirectional Transformers for Language Understanding'. While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
+
+implementation of Transformer and BERT official implementation coming soon, but there are/may hard to read, not easy to understand. 
+
+We will not try to replicate original papers, but instead to understand and apply main ideas to solve really problem.
+
 ## Short Description:
 Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
 
