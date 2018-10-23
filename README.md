@@ -18,9 +18,9 @@ based on multiple layer self-attetion model, then fine tuning by add a classific
 
 As BERT model is based on Transformer, currently we are working on add pretrain task to the model.
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpg"  width="60%" height="60%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpeg"  width="60%" height="60%" />
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpg"  width="60%" height="60%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="60%" height="60%" />
 
 ## Usage
 to train with transform: python train_transform.py [DONE]
@@ -71,9 +71,9 @@ token1 token2 token3 __label__l2 __label__l4
     
 for more detail, check method of mask_language_model from pretrain_task.py
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa1.jpg"  width="60%" height="60%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa1.jpeg"  width="60%" height="60%" />
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa2.jpg"  width="60%" height="60%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa2.jpeg"  width="60%" height="60%" />
 
 
 ## Environment
