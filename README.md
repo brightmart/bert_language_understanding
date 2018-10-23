@@ -87,6 +87,7 @@ it will print loss during training,  and print f1 score for each epoch during va
 
 ## Reference
 <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
+
 <a href='https://arxiv.org/abs/1810.04805'>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
 
 
