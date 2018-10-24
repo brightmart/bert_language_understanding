@@ -35,7 +35,7 @@ Language models are typically left-to-right, e.g.:
 
     "the man went to a store"
 
-P(the | <s>)*P(man|<s> the)*P(went|<s> the man)*…
+     P(the | <s>)*P(man|<s> the)*P(went|<s> the man)*…
 
 The problem is that for the downstream task you usually don't want a language model, you want a the best possible contextual representation of 
 
