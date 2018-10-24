@@ -386,22 +386,7 @@ def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,word2
     :param embedding_instance:
     :return:
     """
-    print("using pre-trained word emebedding.started.word2vec_model_path:",word2vec_model_path,"embed_size:",embed_size)
-    ##word2vec_model = word2vec.load(word2vec_model_path, kind='bin')
-    #binary_flag = True
-    #if '.bin' not in word2vec_model_path:binary_flag = False
-    #word2vec_model = KeyedVectors.load_word2vec_format(word2vec_model_path, binary=binary_flag,unicode_errors='ignore')
-    #word2vec_model = KeyedVectors.load_word2vec_format(word2vec_model_path, binary=True, unicode_errors='ignore')  #
-    #word2vec_dict = {}
-    #count_=0
-    #for word, vector in zip(word2vec_model.vocab, word2vec_model.vectors):
-    #    if count_==0:
-    #        print("pretrained word embedding size:",str(len(vector)))
-    #        count_=count_+1
-    #    if '.bin' not in word2vec_model_path:
-    #        word2vec_dict[word] = vector
-    #    else:
-    #        word2vec_dict[word] = vector /np.linalg.norm(vector) # normalize vector only when word2vec data is a .bin file
+    print("using pre-trained word emebedding.started.word2vec_model_path:",word2vec_model_path,";vocab_size:",vocab_size,";embed_size:",embed_size)
     word2vec_dict=load_word2vec(word2vec_model_path,embed_size)
     word_embedding_2dlist = [[]] * vocab_size        # create an empty word_embedding list.
     word_embedding_2dlist[0] = np.zeros(embed_size)  # assign empty for first word:'PAD'
@@ -426,7 +411,7 @@ def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,word2
             count_not_exist = count_not_exist + 1  # init a random value for the word.
     word_embedding_final = np.array(word_embedding_2dlist)  # covert to 2d array.
     word_embedding = tf.constant(word_embedding_final, dtype=tf.float32)  # convert to tensor
-    t_assign_embedding = tf.assign(embedding_instance,word_embedding)  #TODO model.Embedding. assign this value to our embedding variables of our model.
+    t_assign_embedding = tf.assign(embedding_instance,word_embedding)
     sess.run(t_assign_embedding)
     print("====>>>>word. exists embedding:", count_exist, " ;word not exist embedding:", count_not_exist)
     print("using pre-trained word emebedding.ended...")
@@ -448,13 +433,13 @@ def load_word2vec(word2vec_model_path,embed_size):
         word2vec_dict[word]=vector
     return word2vec_dict
 
-def set_config(FLAGS,num_classes):
+def set_config(FLAGS,num_classes,vocab_size):
     config=Config()
 
     config.learning_rate = FLAGS.learning_rate
     config.batch_size = FLAGS.batch_size
     config.sequence_length = FLAGS.sequence_length
-    config.vocab_size = FLAGS.vocab_size
+    config.vocab_size = vocab_size
     config.dropout_keep_prob = FLAGS.dropout_keep_prob
     config.num_classes=num_classes
     config.is_training = FLAGS.is_training
@@ -469,8 +454,9 @@ def set_config(FLAGS,num_classes):
     config.decay_rate = 0.9
     config.ckpt_dir = 'checkpoint/dummy_test/'
     #config.sequence_length_lm=FLAGS.max_allow_sentence_length
-    config.num_classes_lm=FLAGS.vocab_size
+    config.num_classes_lm=vocab_size
     #config.is_pretrain=FLAGS.is_pretrain
+    config.sequence_length_lm=FLAGS.sequence_length_lm
 
     return config
 

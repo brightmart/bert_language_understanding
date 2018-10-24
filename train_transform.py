@@ -28,17 +28,17 @@ tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the 
 
 tf.app.flags.DEFINE_integer("vocab_size",50002,"maximum vocab size.")
 tf.app.flags.DEFINE_float("learning_rate",0.001,"learning rate") #0.001
-tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") #批处理的大小 32-->128
-tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") #6000批处理的大小 32-->128
-tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65一次衰减多少
-tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65一次衰减多少
+tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") # 32-->128
+tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") # 32-->128
+tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65
+tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65
 tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
 
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
 
-tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #每10轮做一次验证
+tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
 tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
@@ -63,7 +63,7 @@ def main(_):
     gpu_config.gpu_options.allow_growth=True
     with tf.Session(config=gpu_config) as sess:
         #Instantiate Model
-        config=set_config(FLAGS,num_classes)
+        config=set_config(FLAGS,num_classes,vocab_size)
         model=TransformerModel(config)
         #Initialize Save
         saver=tf.train.Saver()
@@ -96,7 +96,7 @@ def main(_):
                 current_loss,lr,l2_loss,_=sess.run([model.loss_val,model.learning_rate,model.l2_loss,model.train_op],feed_dict)
                 loss_total,counter=loss_total+current_loss,counter+1
                 if counter %30==0:
-                    print("Learning rate:%.3f\tLoss:%.3f\tCurrent_loss:%.3f\tL2_loss%.3f\t"%(lr,float(loss_total)/float(counter),current_loss,l2_loss))
+                    print("Learning rate:%.5f\tLoss:%.3f\tCurrent_loss:%.3f\tL2_loss%.3f\t"%(lr,float(loss_total)/float(counter),current_loss,l2_loss))
                 if start!=0 and start%(3000*FLAGS.batch_size)==0:
                     loss_valid, f1_macro_valid, f1_micro_valid= do_eval(sess, model, valid,num_classes,label2index)
                     f1_score_valid=((f1_macro_valid+f1_micro_valid)/2.0)*100.0
