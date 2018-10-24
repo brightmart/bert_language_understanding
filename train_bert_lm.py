@@ -2,11 +2,12 @@
 #process--->1.load data(X,y). 2.create session. 3.feed data. 4.training (5.validation) ,(6.prediction)
 
 """
-
+ BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+ main idea:  based on multiple layer self-attention model(encoder of Transformer), pretrain two tasks( masked language model and next sentence prediction task)
+             on large scale of corpus, then fine-tuning by add a single classification layer.
 train the model(transformer) with data enhanced by pre-training of two tasks.
 default hyperparameter is d_model=512,h=8,d_k=d_v=64(big). if you have a small data set or want to train a
 small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(tiny).
-
 """
 import tensorflow as tf
 import numpy as np
@@ -22,25 +23,25 @@ import random
 FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("mask_lm_source_file","./data/l_20181024_union.txt","path of traning data.") #./data/cail2018_bi.json
+tf.app.flags.DEFINE_string("mask_lm_source_file","./data/l_20181024_union.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
 
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 tf.app.flags.DEFINE_integer("max_allow_sentence_length",10,"max length of allowed sentence for masked language model")
 tf.app.flags.DEFINE_float("learning_rate",0.0001,"learning rate") #0.001
-tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") #批处理的大小 32-->128
-tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") #6000批处理的大小 32-->128
-tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65一次衰减多少
-tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65一次衰减多少
+tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.")
+tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.")
+tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.")
+tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.")
 tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
-tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")#400
+tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")
 
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
 
-tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #每10轮做一次验证
+tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.")
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
 tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")

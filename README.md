@@ -29,9 +29,14 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 
 2. to pre-train masked language with BERT: python train_bert_lm.py [DONE]
 
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="6-%" />
+
+
 3. fine-tuning after pre-train masked LM:  [WIP]
 
 ## Data Format
+
+##### for train transform:
 
 input and output is in the same line, each label is start with '__label__'. 
 
@@ -39,7 +44,15 @@ there is a space between input string and the first label, each label is also sp
 
 e.g. 
 token1 token2 token3 __label__l1 __label__l5 __label__l3
+
 token1 token2 token3 __label__l2 __label__l4
+
+##### for pre-train masked language with BERT:
+
+each line is a sentence or serveral sentences( that is raw data you can get easily)
+
+check data folder for sample data.
+
 
 ## Pretrain Language Understanding Task
 
