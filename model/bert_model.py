@@ -22,7 +22,6 @@ class BertModel:
         self.num_classes = config.num_classes
         self.num_classes_lm = config.num_classes_lm
         self.sequence_length_lm = config.sequence_length_lm # sentence sequence length for training masked langauge mdoel.
-        print("BertModel.num_classes:",self.num_classes)
         self.batch_size = config.batch_size
         self.sequence_length = config.sequence_length
         self.vocab_size = config.vocab_size
@@ -40,12 +39,13 @@ class BertModel:
         self.is_training=config.is_training
         self.is_pretrain=config.is_pretrain
 
-        # place holder(X,y)
+        # below is for fine-tuning stage
         self.input_x= tf.placeholder(tf.int32, [self.batch_size, self.sequence_length], name="input_x")  # e.g.is a sequence, input='the man [mask1] to [mask2] store'
         self.input_y=tf.placeholder(tf.float32, [self.batch_size, self.num_classes],name="input_y")
-        self.input_x_mask_lm=tf.placeholder(tf.int32, [self.batch_size, self.sequence_length_lm], name="input_x_mask_lm")
-        self.input_y_mask_lm=tf.placeholder(tf.int32, [self.batch_size],name="input_y_mask_lm")
-        self.train_position_mask_lm=tf.placeholder(tf.int32,name="train_postion_mask_lm") # for a batch, the position of masked lm is the same
+        # below is pre-trained task 1: masked language model
+        self.x_mask_lm=tf.placeholder(tf.int32, [self.batch_size, self.sequence_length_lm], name="x_mask_lm")
+        self.y_mask_lm=tf.placeholder(tf.int32, [self.batch_size],name="y_mask_lm")
+        self.p_mask_lm=tf.placeholder(tf.int32, [self.batch_size],name="p_mask_lm")
 
         self.learning_rate_decay_half_op = tf.assign(self.learning_rate, self.learning_rate *config.decay_rate)
         self.initializer=tf.random_normal_initializer(stddev=0.1)
@@ -57,51 +57,47 @@ class BertModel:
         self.instantiate_weights()
 
         self.logits_lm =self.inference_lm() # shape:[None,self.num_classes]
-        self.predictions = tf.argmax(self.logits_lm, axis=1, name="predictions")  # shape:[None,]
-
+        self.predictions_lm = tf.argmax(self.logits_lm, axis=1, name="predictions")       # shape:[None,]<---[ None,num_classes]
+        accuary_tensor =tf.equal(tf.cast(self.predictions_lm, tf.int32),self.y_mask_lm) # shape:()
+        self.accuracy_lm=tf.reduce_mean(tf.cast(accuary_tensor,tf.float32))
         if not self.is_training:
             return
+        self.loss_val_lm=self.loss_lm() # train masked language model
+        self.train_op = self.train_lm()
 
-
-        #self.loss_val = self.loss()
-        self.loss_val_lm=self.loss_lm()
-        self.train_op = self.train()
+        #self.loss_val = self.loss() # fine tuning
 
     def inference_lm(self):
         """
-        main inference logic here: invoke transformer model to do inference. input is a sequence, output is also a sequence.
-        input representation-->
+        main inference logic here: invoke transformer model to do inference,input is a sequence, output is also a sequence, get representation of masked token(s) and use a classifier
+        to train the model.
+        # idea of the hidden state of masked position(s):
+        #   1) a batch of position index,
+            2) one hot it, multiply with total sequence represenation,
+            3)every where is 0 for the second dimension(sequence_length),
+            4) only one place is 1,
+            5) thus we can sum up without loss any information.
         :return:
         """
         # 1. input representation(input embedding, positional encoding, segment encoding)
-        token_embeddings = tf.nn.embedding_lookup(self.embedding,self.input_x)  # [batch_size,sequence_length,embed_size]
-        self.input_representation=tf.add(tf.add(token_embeddings,self.segment_embeddings),self.position_embeddings)  # [batch_size,sequence_length,embed_size]
+        token_embeddings = tf.nn.embedding_lookup(self.embedding,self.x_mask_lm)  # [batch_size,sequence_length,embed_size]
+        self.input_representation_lm=tf.add(tf.add(token_embeddings,self.segment_embeddings_lm),self.position_embeddings_lm)  # [batch_size,sequence_length,embed_size]
 
         # 2. repeat Nx times of building block( multi-head attention followed by Add & Norm; feed forward followed by Add & Norm)
-        encoder_class=Encoder(self.d_model,self.d_k,self.d_v,self.sequence_length,self.h,self.batch_size,self.num_layer,self.input_representation,
-                              self.input_representation,dropout_keep_prob=self.dropout_keep_prob,use_residual_conn=self.use_residual_conn)
-        h = encoder_class.encoder_fn() # [batch_size,sequence_length,d_model]
+        encoder_class=Encoder(self.d_model,self.d_k,self.d_v,self.sequence_length_lm,self.h,self.batch_size,self.num_layer,self.input_representation_lm,
+                              self.input_representation_lm,dropout_keep_prob=self.dropout_keep_prob,use_residual_conn=self.use_residual_conn)
+        h_lm = encoder_class.encoder_fn() # [batch_size,sequence_length,d_model]
 
-        h_positioned=h[:,self.train_position_mask_lm,:] # [batch_size, d_model]
-        logits_lm = tf.layers.dense(h_positioned, self.vocab_size)   # shape:[None,self.vocab_size]
+        # 3. get last hidden state of the masked position(s), and project it to make a predict.
+        p_mask_lm_onehot=tf.one_hot(self.p_mask_lm,self.sequence_length_lm) # [batch_size, sequence_length_lm]
+        p_mask_lm_expand=tf.expand_dims(p_mask_lm_onehot,axis=-1) #  # [batch_size, sequence_length_lm,1]
+        h_lm_multiply=tf.multiply(h_lm,p_mask_lm_expand)     # [batch_size,sequence_length,d_model]
+        h_lm_representation=tf.reduce_sum(h_lm_multiply,axis=1) # batch_size,d_model].
+
+        # 4. project representation of masked token(s) to vocab size
+        logits_lm = tf.layers.dense(h_lm_representation, self.vocab_size)   # shape:[None,self.vocab_size]
         logits_lm = tf.nn.dropout(logits_lm,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
-
-        # 3. get logits for different tasks by applying projection layer
-        #logits=self.project_tasks(h) # shape:[None,self.num_classes]
         return logits_lm # shape:[None,self.num_classes]
-
-    def project_tasks_lm(self,h):
-        """
-        project the representation, then to do classification.
-        :param h: [batch_size,sequence_length,d_model]
-        :return: logits: [batch_size, num_classes]
-        transoform each sub task using one-layer MLP ,then get logits.
-        get some insights from densely connected layers from recently development
-        """
-        cls_representation = h[:, 1, :] # [CLS] token's information: classification task's representation
-        logits = tf.layers.dense(cls_representation, self.num_classes)   # shape:[None,self.num_classes]
-        logits = tf.nn.dropout(logits,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
-        return logits
 
     def project_tasks(self,h):
         """
@@ -116,7 +112,20 @@ class BertModel:
         logits = tf.nn.dropout(logits,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
         return logits
 
-    def loss(self,l2_lambda=0.0001*3,epislon=0.000001):
+    def loss_lm(self,l2_lambda=0.0001*3):
+        # input: `logits` and `labels` must have the same shape `[batch_size, num_classes]`
+        # output: A 1-D `Tensor` of length `batch_size` of the same type as `logits` with the softmax cross entropy loss.
+        # let `x = logits`, `z = labels`.  The logistic loss is:z * -log(sigmoid(x)) + (1 - z) * -log(1 - sigmoid(x))
+        y_mask_lm_onehot=tf.one_hot(self.y_mask_lm,self.vocab_size)
+        print("#loss_lm.y_mask_lm_onehot:",y_mask_lm_onehot,";logits_lm:",self.logits_lm)
+        losses= tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_mask_lm_onehot,logits=self.logits_lm)  #[batch_size,num_classes]
+        print("#loss_lm.losses:",losses)
+        lm_loss = tf.reduce_mean(losses)
+        self.l2_loss_lm = tf.add_n([tf.nn.l2_loss(v) for v in tf.trainable_variables() if 'bias' not in v.name]) * l2_lambda
+        loss=lm_loss+self.l2_loss_lm
+        return loss
+
+    def loss(self,l2_lambda=0.0001*3):
         # input: `logits` and `labels` must have the same shape `[batch_size, num_classes]`
         # output: A 1-D `Tensor` of length `batch_size` of the same type as `logits` with the softmax cross entropy loss.
         # let `x = logits`, `z = labels`.  The logistic loss is:z * -log(sigmoid(x)) + (1 - z) * -log(1 - sigmoid(x))
@@ -127,18 +136,7 @@ class BertModel:
         loss=self.losses+self.l2_loss
         return loss
 
-    def loss_lm(self):
-        # input: `logits` and `labels` must have the same shape `[batch_size, num_classes]`
-        # output: A 1-D `Tensor` of length `batch_size` of the same type as `logits` with the softmax cross entropy loss.
-        # let `x = logits`, `z = labels`.  The logistic loss is:z * -log(sigmoid(x)) + (1 - z) * -log(1 - sigmoid(x))
-        input_y_mask_lm_one_hot=tf.one_hot(self.input_y_mask_lm,self.vocab_size)
-        print("##########################input_y_mask_lm_one_hot:",input_y_mask_lm_one_hot,";logits_lm:",self.logits_lm)
-        losses= tf.nn.softmax_cross_entropy_with_logits_v2(labels=input_y_mask_lm_one_hot,logits=self.logits_lm)  #[batch_size,num_classes]
-        print("####################################losses:",losses)
-        loss = tf.reduce_mean(losses)  # shape=(?,)-->(). loss for all data in the batch-->single loss
-        return loss
-
-    def train(self):
+    def train_lm(self):
         """based on the loss, use SGD to update parameter"""
         learning_rate = tf.train.exponential_decay(self.learning_rate, self.global_step, self.decay_steps,self.decay_rate, staircase=True)
         train_op = tf.contrib.layers.optimize_loss(self.loss_val_lm, global_step=self.global_step,learning_rate=learning_rate, optimizer="Adam",clip_gradients=self.clip_gradients)
@@ -148,11 +146,13 @@ class BertModel:
         """define all weights here"""
         with tf.name_scope("embedding"):  # embedding matrix
             self.embedding = tf.get_variable("embedding", shape=[self.vocab_size, self.d_model],initializer=self.initializer)  # [vocab_size,embed_size]
-            self.segment_embeddings = tf.get_variable("segment_embeddings", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
-            self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
+            self.segment_embeddings_lm = tf.get_variable("segment_embeddings_lm", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
+            self.position_embeddings_lm = tf.get_variable("position_embeddings_lm", [self.sequence_length_lm, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
 
 
 # train the model on toy task: learn to count,sum up input, and distinct whether the total value of input is below or greater than a threshold.
+# usage: use train() to train the model, and it will save checkpoint to file system; use predict() to make a prediction based on the trained model.
+
 def train():
     # 1.init config and model
     config=Config()
@@ -166,16 +166,18 @@ def train():
     #    os.makedirs(config.ckpt_dir)
     with tf.Session(config=gpu_config) as sess:
         sess.run(tf.global_variables_initializer())
-        if os.path.exists(config.ckpt_dir): # 如果存在，则加载预训练过的模型
+        if os.path.exists(config.ckpt_dir): #
             saver.restore(sess, tf.train.latest_checkpoint(save_path))
-        for i in range(100000):
+        for i in range(10000):
             # 2.feed data
             input_x = np.random.randn(config.batch_size, config.sequence_length)  # [None, self.sequence_length]
             input_x[input_x >= 0] = 1
             input_x[input_x < 0] = 0
             input_y = generate_label(input_x,threshold)
+            p_mask_lm=[i for i in range(batch_size)]
             # 3.run session to train the model, print some logs.
-            loss, _ = sess.run([model.loss_val,  model.train_op],feed_dict={model.input_x: input_x, model.input_y: input_y,model.dropout_keep_prob: config.dropout_keep_prob})
+            loss, _ = sess.run([model.loss_val,  model.train_op],feed_dict={model.x_mask_lm: input_x, model.y_mask_lm: input_y,model.p_mask_lm:p_mask_lm,
+                                                                            model.dropout_keep_prob: config.dropout_keep_prob})
             print(i, "loss:", loss, "-------------------------------------------------------")
             if i==300:
                 print("label[0]:", input_y[0]);print("input_x:",input_x)

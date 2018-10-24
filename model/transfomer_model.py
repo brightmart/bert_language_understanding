@@ -12,7 +12,7 @@ import numpy as np
 from model.encoder import Encoder
 from model.config_transformer import Config
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 
 class TransformerModel:
     def __init__(self,config):
@@ -114,12 +114,13 @@ class TransformerModel:
             self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
 
 
-# train the model on toy task: learn to count,sum up input, and distinct whether the total value of input is below or greater than a threshold.
+# train the model on toy task: learn to count,sum up all inputs, and distinct whether the total value of input is below or greater than a threshold.
+# usage: first run train () to train the model, it will save checkpoint to file system. then run predict() to make a prediction based on checkpoint.
 def train():
     # 1.init config and model
     config=Config()
     threshold=(config.sequence_length/2)+1
-    model = BertModel(config)
+    model = TransformerModel(config)
     gpu_config = tf.ConfigProto()
     gpu_config.gpu_options.allow_growth = True
     saver = tf.train.Saver()
@@ -149,7 +150,7 @@ def predict():
     config=Config()
     threshold=(config.sequence_length/2)+1
     config.batch_size=1
-    model = BertModel(config)
+    model = TransformerModel(config)
     gpu_config = tf.ConfigProto()
     gpu_config.gpu_options.allow_growth = True
     saver = tf.train.Saver()
