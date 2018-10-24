@@ -33,7 +33,6 @@ tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay le
 tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65
 tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65
 tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
-
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
@@ -42,6 +41,8 @@ tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every 
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
 tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
+tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length of language model")
+tf.app.flags.DEFINE_boolean("is_fine_tuning",False,"is_finetuning.ture:this is fine-tuning stage")
 
 tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
