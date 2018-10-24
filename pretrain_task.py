@@ -65,7 +65,7 @@ def mask_language_model(source_file,target_file,index2word,max_allow_sentence_le
     for i, line in enumerate(source_lines):
         sentence_list = re.sub('[,.。；，]', splitter, line).split(splitter)
         for j,sentence in enumerate(sentence_list):
-            x=x.lower().strip()
+            sentence=sentence.lower().strip()
             string_list=[x for x in jieba.lcut(sentence.strip()) if x and x not in ["：","、","，","）","（"]]
             sentence_length=len(string_list)
             if sentence_length>max_allow_sentence_length: # string list is longer then sentence_length

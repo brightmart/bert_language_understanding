@@ -71,6 +71,8 @@ def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_p
     test_lines = read_file(test_data_path)
     if test_mode:
         train_lines = train_lines[0:1000]
+        valid_lines = valid_lines[0:1000]
+        test_lines = test_lines[0:1000]
 
     number_examples=len(train_lines)
     print("load_data_multilabel.length of train_lines:",number_examples,";valid_lines:",len(valid_lines),";test_lines:",len(test_lines))
@@ -146,6 +148,7 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
     X = []
     Y= []
     label_size=len(label2index)
+    print("label2index:",label2index)
     for i, line in enumerate(lines):
         # 1. transform input string to x
         input_list,input_labels=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
@@ -227,7 +230,7 @@ def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=
 
     random.shuffle(lines)
     if test_mode:
-       lines=lines[0:100]
+       lines=lines[0:1000]
     else:
         lines = lines[0:200*1000] # to make create vocabulary process more quicker, we only random select 200k lines.
 

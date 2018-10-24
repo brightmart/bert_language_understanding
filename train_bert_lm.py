@@ -23,7 +23,7 @@ import random
 FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("mask_lm_source_file","./data/l_20181024_union.txt","path of traning data.")
+tf.app.flags.DEFINE_string("mask_lm_source_file","./data/l_20181022_train.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
 
@@ -38,6 +38,7 @@ tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
 tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")
 
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
+tf.app.flags.DEFINE_boolean("is_fine_tuning",False,"is_finetuning.ture:this is fine-tuning stage")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
 
@@ -98,7 +99,7 @@ def main(_):
                     print("trainX[start:end]:",train_X[start:end],"train_X.shape:",train_X.shape)
                 feed_dict = {model.x_mask_lm: train_X[start:end],model.y_mask_lm: train_y[start:end],model.p_mask_lm:train_p[start:end],
                              model.dropout_keep_prob: FLAGS.dropout_keep_prob}
-                current_loss_lm,lr,l2_loss,_=sess.run([model.loss_val_lm,model.learning_rate,model.l2_loss_lm,model.train_op],feed_dict)
+                current_loss_lm,lr,l2_loss,_=sess.run([model.loss_val_lm,model.learning_rate,model.l2_loss_lm,model.train_op_lm],feed_dict)
                 loss_total_lm,counter=loss_total_lm+current_loss_lm,counter+1
                 if counter %30==0:
                     print("%d\tLearning rate:%.5f\tLoss_lm:%.3f\tCurrent_loss_lm:%.3f\tL2_loss:%.3f\t"%(counter,lr,float(loss_total_lm)/float(counter),current_loss_lm,l2_loss))

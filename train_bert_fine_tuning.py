@@ -12,7 +12,7 @@ small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(
 
 import tensorflow as tf
 import numpy as np
-from model.transfomer_model import TransformerModel
+from model.bert_model import BertModel
 from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config
 import os
 from evaluation_matrix import *
@@ -21,10 +21,10 @@ from model.config_transformer import Config
 FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("training_data_file","./data/l_20181024_union.txt","path of traning data.") #./data/cail2018_bi.json
-tf.app.flags.DEFINE_string("valid_data_file","./data/xxx_20181022_test.txt","path of validation data.")
-tf.app.flags.DEFINE_string("test_data_file","./data/xxx_20181022_test.txt","path of validation data.")
-tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint/","checkpoint location for the model") #save to here, so make it easy to upload for test
+tf.app.flags.DEFINE_string("training_data_file","./data/l_20181022_train.txt","path of traning data.") #./data/cail2018_bi.json
+tf.app.flags.DEFINE_string("valid_data_file","./data/l_20181022_test.txt","path of validation data.")
+tf.app.flags.DEFINE_string("test_data_file","./data/l_20181022_test.txt","path of validation data.")
+tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 
 tf.app.flags.DEFINE_integer("vocab_size",50000,"maximum vocab size.")
@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
-tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
+tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 
 tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
@@ -68,17 +68,16 @@ def main(_):
     with tf.Session(config=gpu_config) as sess:
         #Instantiate Model
         config=set_config(FLAGS,num_classes,vocab_size)
-        model=TransformerModel(config)
+        model=BertModel(config)
         #Initialize Save
         saver=tf.train.Saver()
         if os.path.exists(FLAGS.ckpt_dir+"checkpoint"):
             print("Restoring Variables from Checkpoint.")
-            saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
-            #for i in range(2): #decay learning rate if necessary.
-            #    print(i,"Going to decay learning rate by half.")
-            #    sess.run(model.learning_rate_decay_half_op)
+            sess.run(tf.global_variables_initializer())
+            # restore those variables that names and shapes exists in your model from checkpoint. for detail check: https://gist.github.com/iganichev/d2d8a0b1abc6b15d4a07de83171163d4
+            optimistic_restore(sess, tf.train.latest_checkpoint(FLAGS.ckpt_dir)) #saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
         else:
-            print('Initializing Variables')
+            print('Initializing Variables as model instance is not exist.')
             sess.run(tf.global_variables_initializer())
             if FLAGS.use_pretrained_embedding:
                 vocabulary_index2word={index:word for word,index in vocab_word2index.items()}
@@ -101,7 +100,7 @@ def main(_):
                 loss_total,counter=loss_total+current_loss,counter+1
                 if counter %30==0:
                     print("Learning rate:%.5f\tLoss:%.3f\tCurrent_loss:%.3f\tL2_loss%.3f\t"%(lr,float(loss_total)/float(counter),current_loss,l2_loss))
-                if start!=0 and start%(3000*FLAGS.batch_size)==0:
+                if start!=0 and start%(100*FLAGS.batch_size)==0:
                     loss_valid, f1_macro_valid, f1_micro_valid= do_eval(sess, model, valid,num_classes,label2index)
                     f1_score_valid=((f1_macro_valid+f1_micro_valid)/2.0)*100.0
                     print("Valid.Epoch %d ValidLoss:%.3f\tF1_score_valid:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t" % (epoch, loss_valid, f1_score_valid, f1_macro_valid, f1_micro_valid))
@@ -168,6 +167,26 @@ def do_eval(sess,model,valid,num_classes,label2index):
     f1_micro,f1_macro=compute_micro_macro(label_dict) #label_dict is a dict, key is: an label,value is: (TP,FP,FN). where TP is number of True Positive
     compute_f1_score_write_for_debug(label_dict,label2index)
     return eval_loss/float(eval_counter+small_value),f1_macro,f1_micro
+
+def optimistic_restore(session, save_file):
+  reader = tf.train.NewCheckpointReader(save_file)
+  saved_shapes = reader.get_variable_to_shape_map()
+  var_names = sorted([(var.name, var.name.split(':')[0]) for
+                      var in tf.global_variables()
+                      if var.name.split(':')[0] in saved_shapes])
+  restore_vars = []
+  name2var = dict(zip(map(lambda x: x.name.split(':')[0],
+                          tf.global_variables()),
+                      tf.global_variables()))
+  with tf.variable_scope('', reuse=True):
+    for var_name, saved_var_name in var_names:
+      curr_var = name2var[saved_var_name]
+      var_shape = curr_var.get_shape().as_list()
+      if var_shape == saved_shapes[saved_var_name]:
+        restore_vars.append(curr_var)
+
+  saver = tf.train.Saver(restore_vars)
+  saver.restore(session, save_file)
 
 if __name__ == "__main__":
     tf.app.run()

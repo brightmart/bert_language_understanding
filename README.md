@@ -25,15 +25,24 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
 
 ## Usage
-1. to train with transform: python train_transform.py [DONE]
+1. to handle a classification problem with transform: python train_transform.py [DONE]
 
-2. to pre-train masked language with BERT: python train_bert_lm.py [DONE]
+if you want to try BERT with pre-train of masked language model and fine-tuning. take two steps:
 
+  ##### step 1,  pre-train masked language with BERT: 
+     
+     python train_bert_lm.py [DONE]
+ 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="60%" />
 
+  ##### step 2. fine-tuning:  
+   
+     python train_bert_fine_tuning.py [Done]
+  
+  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="60%" height="60%" />
 
-3. fine-tuning after pre-train masked LM:  [WIP]
-
+  
+  
 ## Data Format
 
 ##### for train transform:
