@@ -23,7 +23,7 @@ import random
 FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("mask_lm_source_file","./data/l_20181022_train.txt","path of traning data.")
+tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
 
