@@ -104,6 +104,20 @@ check data folder for sample data.
 ## Environment
 python 3+ tensorflow 1.10
 
+## My understanding of model of Transformer and BERT
+
+1. why we need self-attention?
+
+2. what is multi-head self-attention, what does q,k,v stand for? add something here.
+
+3. what is position-wise feedfoward?
+
+4. what is the main contribution of BERT?
+
+5. why author use three different types of tokens when generating training data of masked language model?
+
+6. what made BERT model tp achieve new state of art result in language understanding tasks?
+
 ## Toy Task
 
 toy task is used to check whether model can work properly without depend on real data.
