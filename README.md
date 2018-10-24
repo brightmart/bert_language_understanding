@@ -25,9 +25,11 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
 
 ## Usage
-to train with transform: python train_transform.py [DONE]
+1. to train with transform: python train_transform.py [DONE]
 
-to train with BERT: python train_bert.py [WIP]
+2. to pre-train masked language with BERT: python train_bert_lm.py [DONE]
+
+3. fine-tuning after pre-train masked LM:  [WIP]
 
 ## Data Format
 
@@ -51,6 +53,16 @@ token1 token2 token3 __label__l2 __label__l4
     Input Sequence  : The man went to [MASK] store with [MASK] dog
     Target Sequence :                  the                his
     
+   
+   how to get last hidden state of masked position(s)?
+   
+     1) we keep a batch of position index,
+     2) one hot it, multiply with represenation of sequences,
+     3) everywhere is 0 for the second dimension(sequence_length), only one place is 1,
+     4) thus we can sum up without loss any information.
+            
+   for more detail, check method of mask_language_model from pretrain_task.py and train_vert_lm.py
+
 ### task 2: next sentence prediction
   
   many language understanding task, like question answering,inference, need understand relationship
@@ -71,8 +83,6 @@ token1 token2 token3 __label__l2 __label__l4
     Input = [CLS] the man heading to the store [SEP] penguin [MASK] are flight ##less birds [SEP]
     Label = NotNext
     
-for more detail, check method of mask_language_model from pretrain_task.py
-
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa1.jpeg"  width="65%" height="65%" />
 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa2.jpeg"  width="65%" height="65%" />
@@ -106,9 +116,9 @@ you can use it two solve binary classification, multi-class classification or mu
 it will print loss during training,  and print f1 score for each epoch during validation.
 
 ## Reference
-<a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
+1. <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
 
-<a href='https://arxiv.org/abs/1810.04805'>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
+2. <a href='https://arxiv.org/abs/1810.04805'>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
 
-
+3. <a href='https://github.com/tensorflow/tensor2tensor'>Tensor2Tensor for Neural Machine Translation</a>
 
