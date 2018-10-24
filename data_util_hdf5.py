@@ -457,6 +457,7 @@ def set_config(FLAGS,num_classes,vocab_size):
     config.num_classes_lm=vocab_size
     #config.is_pretrain=FLAGS.is_pretrain
     config.sequence_length_lm=FLAGS.sequence_length_lm
+    config.is_fine_tuning=FLAGS.is_fine_tuning
 
     return config
 

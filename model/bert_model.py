@@ -38,6 +38,7 @@ class BertModel:
         self.use_residual_conn=True
         self.is_training=config.is_training
         self.is_pretrain=config.is_pretrain
+        self.is_fine_tuning=config.is_fine_tuning
 
         # below is for fine-tuning stage
         self.input_x= tf.placeholder(tf.int32, [self.batch_size, self.sequence_length], name="input_x")  # e.g.is a sequence, input='the man [mask1] to [mask2] store'
@@ -56,16 +57,22 @@ class BertModel:
 
         self.instantiate_weights()
 
-        self.logits_lm =self.inference_lm() # shape:[None,self.num_classes]
-        self.predictions_lm = tf.argmax(self.logits_lm, axis=1, name="predictions")       # shape:[None,]<---[ None,num_classes]
-        accuary_tensor =tf.equal(tf.cast(self.predictions_lm, tf.int32),self.y_mask_lm) # shape:()
-        self.accuracy_lm=tf.reduce_mean(tf.cast(accuary_tensor,tf.float32))
+        if self.is_fine_tuning:
+            self.logits_lm =self.inference_lm() # shape:[None,self.num_classes]
+            self.predictions_lm = tf.argmax(self.logits_lm, axis=1, name="predictions")       # shape:[None,]<---[ None,num_classes]
+            accuary_tensor =tf.equal(tf.cast(self.predictions_lm, tf.int32),self.y_mask_lm) # shape:()
+            self.accuracy_lm=tf.reduce_mean(tf.cast(accuary_tensor,tf.float32))
+            self.loss_val_lm = self.loss_lm()  # train masked language model
+        else:
+            self.logits=self.inference()
+            self.loss_val = self.loss() # fine tuning
+
         if not self.is_training:
             return
-        self.loss_val_lm=self.loss_lm() # train masked language model
-        self.train_op = self.train_lm()
-
-        #self.loss_val = self.loss() # fine tuning
+        if self.is_fine_tuning:
+            self.train_op = self.train_lm()
+        else:
+            self.train_op = self.train()
 
     def inference_lm(self):
         """
@@ -98,6 +105,35 @@ class BertModel:
         logits_lm = tf.layers.dense(h_lm_representation, self.vocab_size)   # shape:[None,self.vocab_size]
         logits_lm = tf.nn.dropout(logits_lm,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
         return logits_lm # shape:[None,self.num_classes]
+
+    def inference(self):
+        """
+        main inference logic here: invoke transformer model to do inference,input is a sequence, output is also a sequence, get representation of masked token(s) and use a classifier
+        to train the model.
+        # idea of the hidden state of masked position(s):
+        #   1) a batch of position index,
+            2) one hot it, multiply with total sequence represenation,
+            3)every where is 0 for the second dimension(sequence_length),
+            4) only one place is 1,
+            5) thus we can sum up without loss any information.
+        :return:
+        """
+        # 1. input representation(input embedding, positional encoding, segment encoding)
+        token_embeddings = tf.nn.embedding_lookup(self.embedding,self.input_x)  # [batch_size,sequence_length,embed_size]
+        self.input_representation_lm=tf.add(tf.add(token_embeddings,self.segment_embeddings_lm),self.position_embeddings_lm)  # [batch_size,sequence_length,embed_size]
+
+        # 2. repeat Nx times of building block( multi-head attention followed by Add & Norm; feed forward followed by Add & Norm)
+        encoder_class=Encoder(self.d_model,self.d_k,self.d_v,self.sequence_length_lm,self.h,self.batch_size,self.num_layer,self.input_representation_lm,
+                              self.input_representation_lm,dropout_keep_prob=self.dropout_keep_prob,use_residual_conn=self.use_residual_conn)
+        h= encoder_class.encoder_fn() # [batch_size,sequence_length,d_model]
+
+        # 3. get hidden state of token of [cls], and project it to make a predict.
+        h_cls=h[:,0,:] # [batch_size,d_model]
+
+        # 4. project representation of masked token(s) to vocab size
+        logits = tf.layers.dense(h_cls, self.vocab_size)   # shape:[None,self.vocab_size]
+        logits = tf.nn.dropout(logits,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
+        return logits # shape:[None,self.num_classes]
 
     def project_tasks(self,h):
         """
@@ -142,12 +178,21 @@ class BertModel:
         train_op = tf.contrib.layers.optimize_loss(self.loss_val_lm, global_step=self.global_step,learning_rate=learning_rate, optimizer="Adam",clip_gradients=self.clip_gradients)
         return train_op
 
+    def train(self):
+        """based on the loss, use SGD to update parameter"""
+        learning_rate = tf.train.exponential_decay(self.learning_rate, self.global_step, self.decay_steps,self.decay_rate, staircase=True)
+        train_op = tf.contrib.layers.optimize_loss(self.loss_val, global_step=self.global_step,learning_rate=learning_rate, optimizer="Adam",clip_gradients=self.clip_gradients)
+        return train_op
+
     def instantiate_weights(self):
         """define all weights here"""
         with tf.name_scope("embedding"):  # embedding matrix
             self.embedding = tf.get_variable("embedding", shape=[self.vocab_size, self.d_model],initializer=self.initializer)  # [vocab_size,embed_size]
             self.segment_embeddings_lm = tf.get_variable("segment_embeddings_lm", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
             self.position_embeddings_lm = tf.get_variable("position_embeddings_lm", [self.sequence_length_lm, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
+
+            #self.segment_embeddings = tf.get_variable("segment_embeddings", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
+            #self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
 
 
 # train the model on toy task: learn to count,sum up input, and distinct whether the total value of input is below or greater than a threshold.
