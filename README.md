@@ -25,24 +25,47 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
 
 ## Usage
-1. to handle a classification problem with transform: python train_transform.py [DONE]
+
+   ##### [basic step] to handle a classification problem with transform: 
+    
+        python train_transform.py [DONE]
 
 if you want to try BERT with pre-train of masked language model and fine-tuning. take two steps:
 
-  ##### step 1,  pre-train masked language with BERT: 
+  ##### [step 1],  pre-train masked language with BERT: 
      
      python train_bert_lm.py [DONE]
  
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="60%" />
 
-  ##### step 2. fine-tuning:  
+  ##### [step 2]. fine-tuning:  
    
      python train_bert_fine_tuning.py [Done]
   
-  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="60%" height="60%" />
-
+  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="70%" height="70%" />
   
+   as you can see, even at the start point of fine-tuning, just after restore parameters from pre-trained model, the loss of model is smaller
+   
+   than training from completely new, and f1 score is also higher while new model may start from 0.
+   
+   Notice: to help you try new idea first, you can set hypermater test_mode to True. it will only load few data, and start to training quickly.
   
+  ##### optional hypermeter
+  d_model: dimension of model.   [512]
+  
+  num_layer: number of layers. [6]
+  
+  num_header: number of headers of self-attention [8]
+  
+  d_k: dimension of Key(K). dimension of Query(Q) is the same. [64]
+  
+  d_v: dimension of V. [64]
+  
+    default hyperparameter is d_model=512,h=8,d_k=d_v=64(big). if you have want to train the model fast, or has a small data set 
+    
+    or want to train a small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(tiny).
+  
+ 
 ## Data Format
 
 ##### for train transform:
@@ -75,7 +98,6 @@ check data folder for sample data.
     Input Sequence  : The man went to [MASK] store with [MASK] dog
     Target Sequence :                  the                his
     
-   
    how to get last hidden state of masked position(s)?
    
      1) we keep a batch of position index,
