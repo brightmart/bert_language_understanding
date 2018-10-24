@@ -20,7 +20,7 @@ from model.config_transformer import Config
 FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("training_data_file","./data/xxx_20181022_train.txt","path of traning data.") #./data/cail2018_bi.json
+tf.app.flags.DEFINE_string("training_data_file","./data/l_20181024_union.txt","path of traning data.") #./data/cail2018_bi.json
 tf.app.flags.DEFINE_string("valid_data_file","./data/xxx_20181022_test.txt","path of validation data.")
 tf.app.flags.DEFINE_string("test_data_file","./data/xxx_20181022_test.txt","path of validation data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint/","checkpoint location for the model") #save to here, so make it easy to upload for test

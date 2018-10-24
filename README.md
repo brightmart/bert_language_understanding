@@ -29,7 +29,7 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 
 2. to pre-train masked language with BERT: python train_bert_lm.py [DONE]
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="6-%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="60%" />
 
 
 3. fine-tuning after pre-train masked LM:  [WIP]
