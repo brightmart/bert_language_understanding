@@ -1,15 +1,17 @@
 # bert_language_understanding
 Pre-training of Deep Bidirectional Transformers for Language Understanding
 
+ Update: The majority part of replicate main ideas of these two papers was done.
+
 This repository is trying to solve some language understanding problems using technology developed in recent years.
  
-It is/will be an implement of 'Attention Is All You Need'(Transformer) and 
+It is be an implement of 'Attention Is All You Need'(Transformer) and 
 
 'Pre-training of Deep Bidirectional Transformers for Language Understanding'. While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
 implementation of Transformer and BERT official implementation coming soon, but there are/may hard to read, not easy to understand. 
 
-We will not try to replicate original papers, but instead to understand and apply main ideas to solve really problem.
+We will not try to replicate original papers entirely, but instead to understand and apply main ideas to solve really problem.
 
 The majority part fo work here was done by another repository last year: <a href='https://github.com/brightmart/text_classification'>text classification</a>
 
@@ -24,6 +26,38 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
 
+## Long Description from author
+The basic idea is very simple. For several years, people have been getting very good results "pre-training" DNNs as a language model 
+
+and then fine-tuning on some downstream NLP task (question answering, natural language inference, sentiment analysis, etc.).
+
+Language models are typically left-to-right, e.g.:
+
+    "the man went to a store"
+
+P(the | <s>)*P(man|<s> the)*P(went|<s> the man)*…
+
+The problem is that for the downstream task you usually don't want a language model, you want a the best possible contextual representation of 
+
+each word. If each word can only see context to its left, clearly a lot is missing. So one trick that people have done is to also train a 
+
+right-to-left model, e.g.:
+
+     P(store|</s>)*P(a|store </s>)*…
+
+Now you have Â two representations of each word, one left-to-right and one right-to-left, and you can concatenate them together for your downstream task.
+
+But intuitively, it would be much better if we could train a single model that wasÂ deeply bidirectional.
+
+It's unfortunately impossible to train a deep bidirectional model like a normal LM, because that would create cycles where words can indirectly
+ 
+"see themselves," and the predictions become trivial.
+
+What we can do instead is the very simple trick that's used in de-noising auto-encoders, where we mask some percent of words from the input and 
+
+have to reconstruct those words from context. We call this a "masked LM" but it is often called a Cloze task.
+
+
 ## Usage
 
    ##### [basic step] to handle a classification problem with transform: 
@@ -32,17 +66,17 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 
 if you want to try BERT with pre-train of masked language model and fine-tuning. take two steps:
 
-  ##### [step 1],  pre-train masked language with BERT: 
+  ##### [step 1]  pre-train masked language with BERT: 
      
      python train_bert_lm.py [DONE]
  
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="60%" />
 
-  ##### [step 2]. fine-tuning:  
+  ##### [step 2] fine-tuning:  
    
      python train_bert_fine_tuning.py [Done]
   
-  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="70%" height="70%" />
+  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="80%" height="80%" />
   
    as you can see, even at the start point of fine-tuning, just after restore parameters from pre-trained model, the loss of model is smaller
    
@@ -50,7 +84,8 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
    
    Notice: to help you try new idea first, you can set hypermater test_mode to True. it will only load few data, and start to training quickly.
   
-  ##### optional hypermeter
+  #### Optional hypermeters
+  
   d_model: dimension of model.   [512]
   
   num_layer: number of layers. [6]
@@ -66,7 +101,7 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
     or want to train a small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(tiny).
   
  
-## Data Format
+## Data Format and Sample Data
 
 ##### for train transform:
 
@@ -83,7 +118,7 @@ token1 token2 token3 __label__l2 __label__l4
 
 each line is a sentence or serveral sentences( that is raw data you can get easily)
 
-check data folder for sample data.
+check 'data' folder for sample data.
 
 
 ## Pretrain Language Understanding Task
@@ -135,7 +170,7 @@ check data folder for sample data.
 ## Environment
 python 3+ tensorflow 1.10
 
-## My understanding of model of Transformer and BERT
+## Better Understanding of Transformer and BERT
 
 1. why we need self-attention?
 
