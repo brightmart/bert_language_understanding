@@ -66,7 +66,7 @@ def mask_language_model(source_file,target_file,index2word,max_allow_sentence_le
         sentence_list = re.sub('[,.。；，]', splitter, line).split(splitter)
         for j,sentence in enumerate(sentence_list):
             sentence=sentence.lower().strip()
-            string_list=[x for x in jieba.lcut(sentence.strip()) if x and x not in ["：","、","，","）","（"]]
+            string_list=[x for x in jieba.lcut(sentence.strip()) if x and x not in ["\"","：","、","，","）","（"]]
             sentence_length=len(string_list)
             if sentence_length>max_allow_sentence_length: # string list is longer then sentence_length
                 string_list=string_list[0:max_allow_sentence_length]
@@ -92,6 +92,7 @@ def mask_language_model(source_file,target_file,index2word,max_allow_sentence_le
             X_mask_lm.append(string_list_indexed) # input(x) to list
             y_mask_lm.append(mask_word_indexed) # input(y) to list
             p_mask_lm.append(index)
+
             count=count+1
             if i%1000==0:
                 print(count,"index:",index,"i:",i,"j:",j,";mask_word_1:",mask_word,";string_list:",string_list)

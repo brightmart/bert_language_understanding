@@ -89,6 +89,7 @@ def main(_):
         iteration=0
         score_best=-100
         f1_score=0
+        epoch=0
         for epoch in range(curr_epoch,FLAGS.num_epochs):
             loss_total, counter =  0.0, 0
             for start, end in zip(range(0, number_of_training_data, batch_size),range(batch_size, number_of_training_data, batch_size)):
@@ -188,7 +189,7 @@ def optimistic_restore(session, save_file):
       var_shape = curr_var.get_shape().as_list()
       if var_shape == saved_shapes[saved_var_name]:
           print("going to restore.var_name:",var_name,";saved_var_name:",saved_var_name)
-         restore_vars.append(curr_var)
+          restore_vars.append(curr_var)
   saver = tf.train.Saver(restore_vars)
   saver.restore(session, save_file)
 

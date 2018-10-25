@@ -50,7 +50,7 @@ tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEm
 tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 
 def main(_):
-    vocab_word2index, label2index= create_or_load_vocabulary(FLAGS.data_path,FLAGS.mask_lm_source_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
+    vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.mask_lm_source_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
     vocab_size = len(vocab_word2index);print("bert_pertrain_lm.vocab_size:",vocab_size)
     index2word={v:k for k,v in vocab_word2index.items()}
     train,valid,test=mask_language_model(FLAGS.mask_lm_source_file,FLAGS.data_path,index2word,max_allow_sentence_length=FLAGS.max_allow_sentence_length,test_mode=FLAGS.test_mode)
@@ -119,7 +119,6 @@ def do_eval(sess,model,valid,batch_size):
     :param model:
     :param valid:
     :param num_classes:
-    :param label2index:
     :return:
     """
     valid_X,valid_y,valid_p=valid
