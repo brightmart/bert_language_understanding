@@ -6,8 +6,8 @@ import multiprocessing
 from collections import Counter
 import os
 import pickle
-import gensim
-from gensim.models import KeyedVectors
+#import gensim
+#from gensim.models import KeyedVectors
 import h5py
 import time
 import json
@@ -18,9 +18,11 @@ from model.config import Config
 
 PAD_ID = 0
 UNK_ID=1
-MASK_ID=2
+CLS_ID=2
+MASK_ID=3
 _PAD="_PAD"
 _UNK="UNK"
+_CLS="CLS"
 _MASK="MASK"
 
 LABEL_SPLITTER='__label__'
@@ -154,6 +156,7 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
         input_list,input_labels=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
         #input_list = token_string_as_list(input_strings,tokenize_style=tokenize_style)
         x_list = [vocab_word2index.get(x, UNK_ID) for x in input_list if x.strip()]  # transform input to index
+        x_list.insert(0,_CLS) # INSERT SPECIAL TOKEN:[CLS]. it will be used for classificaiton.
         x_list=pad_truncate_list(x_list, sentence_len)
         X.append(x_list)
 
@@ -251,11 +254,11 @@ def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=
     vocab_word2index={}
     vocab_word2index[_PAD]=PAD_ID
     vocab_word2index[_UNK]=UNK_ID
+    vocab_word2index[_CLS]=CLS_ID
     vocab_word2index[_MASK]=MASK_ID
-
     for i,tuplee in enumerate(vocab_list):
         word,freq=tuplee
-        vocab_word2index[word]=i+3
+        vocab_word2index[word]=i+4
 
     label2index={}
     label_list=c_labels.most_common()
@@ -359,23 +362,18 @@ def load_cache_from_hdf5(cache_file):
     f.close()
 
     return train, valid, test
-
 def pad_truncate_list(x_list, maxlen):
     """
     pad and truncate input to maxlen based on trucating and padding strategy
     :param x_list:e.g. [1,10,3,5,...]
     :return:result_list:a new list,length is maxlen
     """
-    result_list=[0 for i in range(maxlen)] #[0,0,..,0]
+    result_list=[0 for i in range(maxlen)]
     length_input=len(x_list)
-    if length_input>maxlen: # need to trancat===>no need to pad
-        start_point = (length_input - maxlen)
-        x_list=x_list[start_point:]
-        for i, element in enumerate(x_list):
-            result_list[i] = element
-    else:#sequence is to short===>need to pad something===>no need to trancat. [1,2,3], max_len=1000.
-        for i in range(length_input):
-            result_list[i] = x_list[i]
+    if length_input>maxlen:
+        x_list = x_list[0:maxlen]
+    for i, element in enumerate(x_list):
+        result_list[i] = element
     return result_list
 
 def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,word2vec_model_path,embedding_instance,embed_size):
@@ -394,12 +392,13 @@ def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,word2
     word_embedding_2dlist = [[]] * vocab_size        # create an empty word_embedding list.
     word_embedding_2dlist[0] = np.zeros(embed_size)  # assign empty for first word:'PAD'
     word_embedding_2dlist[1] = np.zeros(embed_size)  # assign empty for second word:'UNK'
-    word_embedding_2dlist[2] = np.zeros(embed_size)  # assign empty for third word:'MASK'
+    word_embedding_2dlist[2] = np.zeros(embed_size)  # assign empty for third word:'CLS'
+    word_embedding_2dlist[3] = np.zeros(embed_size)  # assign empty for third word:'MASK'
 
-    bound = np.sqrt(3.0) / np.sqrt(vocab_size)  # bound for random variables.
+    bound = np.sqrt(0.3) / np.sqrt(vocab_size)  # bound for random variables.3.0
     count_exist = 0;
     count_not_exist = 0
-    for i in range(3, vocab_size):  # loop each word
+    for i in range(4, vocab_size):  # loop each word
         word = vocabulary_index2word[i]  # get a word
         embedding = None
         try:

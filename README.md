@@ -208,6 +208,13 @@ you can use it two solve binary classification, multi-class classification or mu
 
 it will print loss during training,  and print f1 score for each epoch during validation.
 
+##  TODO
+1.special handle first token [cls] as input and classification 
+
+2.position embedding is not shared between with pretrain and fine-tuning yet.
+
+3.
+    
 ## Reference
 1. <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
 

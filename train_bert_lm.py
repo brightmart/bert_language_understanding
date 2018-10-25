@@ -103,7 +103,7 @@ def main(_):
                 loss_total_lm,counter=loss_total_lm+current_loss_lm,counter+1
                 if counter %30==0:
                     print("%d\tLearning rate:%.5f\tLoss_lm:%.3f\tCurrent_loss_lm:%.3f\tL2_loss:%.3f\t"%(counter,lr,float(loss_total_lm)/float(counter),current_loss_lm,l2_loss))
-                if epoch!=0 and start!=0 and start%(50*FLAGS.batch_size)==0:
+                if epoch!=0 and start!=0 and start%(4000*FLAGS.batch_size)==0:
                     loss_valid, acc_valid= do_eval(sess, model, valid,batch_size)
                     print("%d\tValid.Epoch %d ValidLoss:%.3f\tAcc_valid:%.3f\t" % (counter,epoch, loss_valid, acc_valid*100))
                     # save model to checkpoint
@@ -114,6 +114,7 @@ def main(_):
                         score_best=acc_valid
             sess.run(model.epoch_increment)
 
+validation_size=2000
 def do_eval(sess,model,valid,batch_size):
     """
     do evaluation using validation set, and report loss, and f1 score.
@@ -126,6 +127,8 @@ def do_eval(sess,model,valid,batch_size):
     """
     valid_X,valid_y,valid_p=valid
     number_examples=valid_X.shape[0]
+    print("do_eval.valid.number_examples:",number_examples)
+    if number_examples>validation_size: valid_X,valid_y,valid_p=valid_X[0:validation_size],valid_y[0:validation_size],valid_p[0:validation_size]
     eval_loss,eval_counter,eval_acc=0.0,0,0.0
     for start,end in zip(range(0,number_examples,batch_size),range(batch_size,number_examples,batch_size)):
         feed_dict = {model.x_mask_lm: valid_X[start:end],model.y_mask_lm: valid_y[start:end],model.p_mask_lm:valid_p[start:end],
