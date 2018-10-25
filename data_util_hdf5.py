@@ -72,7 +72,7 @@ def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_p
     valid_lines = read_file(valid_data_path)
     test_lines = read_file(test_data_path)
     if test_mode:
-        train_lines = train_lines[0:1000]
+        train_lines = train_lines[0:10000]
         valid_lines = valid_lines[0:1000]
         test_lines = test_lines[0:1000]
 
@@ -90,7 +90,7 @@ def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_p
         print("#start multi-processing:",chunk_id,file_name)
         # 3.3 apply_async
         print("chunk:",len(each_chunk),";file_name:",file_name,";")
-        pool.apply(transform_data_to_index,args=(each_chunk, file_name, vocab_word2index, label2index,sentence_len,'train',tokenize_style))
+        pool.apply_async(transform_data_to_index,args=(each_chunk, file_name, vocab_word2index, label2index,sentence_len,'train',tokenize_style))
     pool.close()
     pool.join()
 
@@ -152,22 +152,25 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
     label_size=len(label2index)
     print("label2index:",label2index)
     for i, line in enumerate(lines):
-        # 1. transform input string to x
-        input_list,input_labels=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
-        #input_list = token_string_as_list(input_strings,tokenize_style=tokenize_style)
-        x_list = [vocab_word2index.get(x, UNK_ID) for x in input_list if x.strip()]  # transform input to index
-        x_list.insert(0,_CLS) # INSERT SPECIAL TOKEN:[CLS]. it will be used for classificaiton.
-        x_list=pad_truncate_list(x_list, sentence_len)
-        X.append(x_list)
+        try:
+            # 1. transform input string to x
+            input_list,input_labels=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
+            #input_list = token_string_as_list(input_strings,tokenize_style=tokenize_style)
+            x_list = [vocab_word2index.get(x, UNK_ID) for x in input_list if x.strip()]  # transform input to index
+            x_list.insert(0,CLS_ID) # INSERT SPECIAL TOKEN:[CLS]. it will be used for classificaiton.
+            x_list=pad_truncate_list(x_list, sentence_len)
 
-        # 2. transform label to y
-        label_list = [label2index[label] for label in input_labels]
-        y = transform_multilabel_as_multihot(label_list, label_size)
-        Y.append(y)
-        if i % 100 == 0:
-            print(data_type,i,"transform_data_to_index.line:",line,";x_list:",x_list)
-            print(data_type,i,"transform_data_to_index.input_labels:",input_labels,";label_list:",label_list,";y:",y)
+            # 2. transform label to y
+            label_list = [label2index[label] for label in input_labels]
+            y = transform_multilabel_as_multihot(label_list, label_size)
 
+            X.append(x_list)
+            Y.append(y)
+            if i % 100 == 0:
+                print(data_type,i,"transform_data_to_index.line:",line,";x_list:",x_list)
+                print(data_type,i,"transform_data_to_index.input_labels:",input_labels,";label_list:",label_list,";y:",y)
+        except Exception as e:
+            if random.randint(0, 500) == 1:print("ignore line. you may be in test_model=True, label may not exist.",line,e)
     X=np.array(X)
     Y = np.array(Y)
 
@@ -233,7 +236,7 @@ def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=
 
     random.shuffle(lines)
     if test_mode:
-       lines=lines[0:1000]
+       lines=lines[0:20000]
     else:
         lines = lines[0:200*1000] # to make create vocabulary process more quicker, we only random select 200k lines.
 

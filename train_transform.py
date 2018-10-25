@@ -58,7 +58,7 @@ def main(_):
     train_X, train_Y= train
     valid_X, valid_Y= valid
     test_X,test_Y = test
-    print("length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
+    print("Test_mode:",FLAGS.test_mode,";length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
     # 1.create session.
     gpu_config=tf.ConfigProto()
     gpu_config.gpu_options.allow_growth=True
