@@ -19,15 +19,23 @@ from model.config_transformer import Config
 #configuration
 FLAGS=tf.app.flags.FLAGS
 
+# you can change as you like
+tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
 tf.app.flags.DEFINE_string("training_data_file","./data/bert_train.txt","path of traning data.") #./data/cail2018_bi.json
 tf.app.flags.DEFINE_string("valid_data_file","./data/bert_test.txt","path of validation data.")
 tf.app.flags.DEFINE_string("test_data_file","./data/bert_test.txt","path of validation data.")
+tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
+tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
+tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
+tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
+tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
+
+# below hyperparameter you can use default one, seldom change
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
-
 tf.app.flags.DEFINE_integer("vocab_size",50002,"maximum vocab size.")
-tf.app.flags.DEFINE_float("learning_rate",0.001,"learning rate") #0.001
+tf.app.flags.DEFINE_float("learning_rate",0.0001,"learning rate") #0.001
 tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") # 32-->128
 tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") # 32-->128
 tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65
@@ -36,19 +44,11 @@ tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
-
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
-tf.app.flags.DEFINE_boolean("test_mode",False,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length of language model")
 tf.app.flags.DEFINE_boolean("is_fine_tuning",False,"is_finetuning.ture:this is fine-tuning stage")
-
-tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
-tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
-tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
-tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
-tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 def main(_):
     vocab_word2index, label2index= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
@@ -117,7 +117,7 @@ def main(_):
             print(epoch,FLAGS.validate_every,(epoch % FLAGS.validate_every==0))
             if epoch % FLAGS.validate_every==0:
                 loss_valid,f1_macro_valid2,f1_micro_valid2=do_eval(sess,model,valid,num_classes,label2index)
-                f1_score_valid2 = ((f1_macro_valid2 + f1_micro_valid2) / 2.0) * 100.0
+                f1_score_valid2 = ((f1_macro_valid2 + f1_micro_valid2) / 2.0) #* 100.0
                 print("Valid.Epoch %d ValidLoss:%.3f\tF1 score:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t"% (epoch,loss_valid,f1_score_valid2,f1_macro_valid2,f1_micro_valid2))
                 #save model to checkpoint
                 if f1_score_valid2 > score_best:
@@ -132,7 +132,7 @@ def main(_):
 
         # 5.最后在测试集上做测试，并报告测试准确率 Testto 0.0
         loss_test, f1_macro_test, f1_micro_test=do_eval(sess, model, test,num_classes, label2index)
-        f1_score_test=((f1_macro_test + f1_micro_test) / 2.0) * 100.0
+        f1_score_test=((f1_macro_test + f1_micro_test) / 2.0) #* 100.0
         print("Test.Epoch %d TestLoss:%.3f\tF1_score:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t" % (epoch, loss_test, f1_score_test,f1_macro_test, f1_micro_test))
         print("training completed...")
 

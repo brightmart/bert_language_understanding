@@ -427,15 +427,23 @@ def load_word2vec(word2vec_model_path,embed_size):
     :param word2vec_model_path:
     :return: word2vec_dict. word2vec_dict[word]=vector
     """
-    word2vec_object=open(word2vec_model_path,'r')
-    lines=word2vec_object.readlines()
-    word2vec_dict={}
-    for i,line in enumerate(lines):
-        if i==0: continue
-        string_list=line.strip().split(" ")
-        word=string_list[0]
-        vector=string_list[1:][0:embed_size]
-        word2vec_dict[word]=vector
+    #word2vec_object = codecs.open(word2vec_model_path,'r','utf-8') #open(word2vec_model_path,'r')
+    #lines=word2vec_object.readlines()
+    #word2vec_dict={}
+    #for i,line in enumerate(lines):
+    #    if i==0: continue
+    #    string_list=line.strip().split(" ")
+    #    word=string_list[0]
+    #    vector=string_list[1:][0:embed_size]
+    #    word2vec_dict[word]=vector
+    ######################
+    word2vec_dict = {}
+    with open(word2vec_model_path, errors='ignore') as f:
+        meta = f.readline()
+        for line in f.readlines():
+            items = line.split(' ')
+            #if len(items[0]) > 1 and items[0] in vocab:
+            word2vec_dict[items[0]] = np.fromiter(items[1:][0:embed_size], dtype=float)
     return word2vec_dict
 
 def set_config(FLAGS,num_classes,vocab_size):

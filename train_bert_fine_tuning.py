@@ -28,7 +28,7 @@ tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location fo
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 
 tf.app.flags.DEFINE_integer("vocab_size",50000,"maximum vocab size.")
-tf.app.flags.DEFINE_float("learning_rate",0.0001,"learning rate") #0.001
+tf.app.flags.DEFINE_float("learning_rate",0.00001,"learning rate") #0.001
 tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") # 32-->128
 tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") # 32-->128
 tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65
@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.") #
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
-tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
+tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used. test mode for test purpose.")
 
 tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
@@ -61,7 +61,7 @@ def main(_):
     train_X, train_Y= train
     valid_X, valid_Y= valid
     test_X,test_Y = test
-    print("length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
+    print("test_model:",FLAGS.test_mode,";length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
     # 1.create session.
     gpu_config=tf.ConfigProto()
     gpu_config.gpu_options.allow_growth=True
@@ -100,9 +100,9 @@ def main(_):
                 loss_total,counter=loss_total+current_loss,counter+1
                 if counter %30==0:
                     print("Learning rate:%.5f\tLoss:%.3f\tCurrent_loss:%.3f\tL2_loss%.3f\t"%(lr,float(loss_total)/float(counter),current_loss,l2_loss))
-                if start!=0 and start%(100*FLAGS.batch_size)==0:
+                if start!=0 and start%(3000*FLAGS.batch_size)==0:
                     loss_valid, f1_macro_valid, f1_micro_valid= do_eval(sess, model, valid,num_classes,label2index)
-                    f1_score_valid=((f1_macro_valid+f1_micro_valid)/2.0)*100.0
+                    f1_score_valid=((f1_macro_valid+f1_micro_valid)/2.0) #*100.0
                     print("Valid.Epoch %d ValidLoss:%.3f\tF1_score_valid:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t" % (epoch, loss_valid, f1_score_valid, f1_macro_valid, f1_micro_valid))
 
                     # save model to checkpoint
@@ -119,7 +119,7 @@ def main(_):
             print(epoch,FLAGS.validate_every,(epoch % FLAGS.validate_every==0))
             if epoch % FLAGS.validate_every==0:
                 loss_valid,f1_macro_valid2,f1_micro_valid2=do_eval(sess,model,valid,num_classes,label2index)
-                f1_score_valid2 = ((f1_macro_valid2 + f1_micro_valid2) / 2.0) * 100.0
+                f1_score_valid2 = ((f1_macro_valid2 + f1_micro_valid2) / 2.0) #* 100.0
                 print("Valid.Epoch %d ValidLoss:%.3f\tF1 score:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t"% (epoch,loss_valid,f1_score_valid2,f1_macro_valid2,f1_micro_valid2))
                 #save model to checkpoint
                 if f1_score_valid2 > score_best:
@@ -169,6 +169,12 @@ def do_eval(sess,model,valid,num_classes,label2index):
     return eval_loss/float(eval_counter+small_value),f1_macro,f1_micro
 
 def optimistic_restore(session, save_file):
+  """
+  restore only those variable that exists in the model
+  :param session:
+  :param save_file:
+  :return:
+  """
   reader = tf.train.NewCheckpointReader(save_file)
   saved_shapes = reader.get_variable_to_shape_map()
   var_names = sorted([(var.name, var.name.split(':')[0]) for
@@ -181,7 +187,8 @@ def optimistic_restore(session, save_file):
       curr_var = name2var[saved_var_name]
       var_shape = curr_var.get_shape().as_list()
       if var_shape == saved_shapes[saved_var_name]:
-        restore_vars.append(curr_var)
+          print("going to restore.var_name:",var_name,";saved_var_name:",saved_var_name)
+         restore_vars.append(curr_var)
   saver = tf.train.Saver(restore_vars)
   saver.restore(session, save_file)
 

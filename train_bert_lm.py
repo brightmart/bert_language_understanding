@@ -26,6 +26,11 @@ tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
 tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
+tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
+tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
+tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
+tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
+tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 tf.app.flags.DEFINE_integer("max_allow_sentence_length",10,"max length of allowed sentence for masked language model")
@@ -36,22 +41,13 @@ tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.")
 tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.")
 tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
 tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")
-
 tf.app.flags.DEFINE_boolean("is_training",True,"is training.true:tranining,false:testing/inference")
 tf.app.flags.DEFINE_boolean("is_fine_tuning",False,"is_finetuning.ture:this is fine-tuning stage")
 tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
-tf.app.flags.DEFINE_integer("process_num",3,"number of cpu used")
-
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.")
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
 tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
-
-tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
-tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
-tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
-tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
-tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 def main(_):
     vocab_word2index, label2index= create_or_load_vocabulary(FLAGS.data_path,FLAGS.mask_lm_source_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
@@ -88,6 +84,7 @@ def main(_):
 
         # 2.feed data & training
         number_of_training_data=len(train_X)
+        print("number_of_training_data:",number_of_training_data)
         batch_size=FLAGS.batch_size
         iteration=0
         score_best=-100
@@ -102,8 +99,8 @@ def main(_):
                 current_loss_lm,lr,l2_loss,_=sess.run([model.loss_val_lm,model.learning_rate,model.l2_loss_lm,model.train_op_lm],feed_dict)
                 loss_total_lm,counter=loss_total_lm+current_loss_lm,counter+1
                 if counter %30==0:
-                    print("%d\tLearning rate:%.5f\tLoss_lm:%.3f\tCurrent_loss_lm:%.3f\tL2_loss:%.3f\t"%(counter,lr,float(loss_total_lm)/float(counter),current_loss_lm,l2_loss))
-                if epoch!=0 and start!=0 and start%(4000*FLAGS.batch_size)==0:
+                    print("%d\tLearning rate:%.5f\tLoss_lm:%.3f\tCurrent_loss_lm:%.3f\tL2_loss:%.3f\t"%(epoch,lr,float(loss_total_lm)/float(counter),current_loss_lm,l2_loss))
+                if epoch!=0 and start!=0 and start%(2000*FLAGS.batch_size)==0:
                     loss_valid, acc_valid= do_eval(sess, model, valid,batch_size)
                     print("%d\tValid.Epoch %d ValidLoss:%.3f\tAcc_valid:%.3f\t" % (counter,epoch, loss_valid, acc_valid*100))
                     # save model to checkpoint
@@ -114,7 +111,7 @@ def main(_):
                         score_best=acc_valid
             sess.run(model.epoch_increment)
 
-validation_size=2000
+validation_size=100*FLAGS.batch_size
 def do_eval(sess,model,valid,batch_size):
     """
     do evaluation using validation set, and report loss, and f1 score.
@@ -127,6 +124,9 @@ def do_eval(sess,model,valid,batch_size):
     """
     valid_X,valid_y,valid_p=valid
     number_examples=valid_X.shape[0]
+    if number_examples>10000:
+        number_examples=validation_size
+        #valid_X, valid_y, valid_p=valid_X[0:validation_size],valid_y[0:validation_size],valid_p[0:validation_size]
     print("do_eval.valid.number_examples:",number_examples)
     if number_examples>validation_size: valid_X,valid_y,valid_p=valid_X[0:validation_size],valid_y[0:validation_size],valid_p[0:validation_size]
     eval_loss,eval_counter,eval_acc=0.0,0,0.0
