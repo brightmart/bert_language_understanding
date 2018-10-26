@@ -32,7 +32,7 @@ tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
 tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 # below hyperparameter you can use default one, seldom change
-tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint/","checkpoint location for the model") #save to here, so make it easy to upload for test
+tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_transformer/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 tf.app.flags.DEFINE_integer("vocab_size",50002,"maximum vocab size.")
 tf.app.flags.DEFINE_float("learning_rate",0.0001,"learning rate") #0.001

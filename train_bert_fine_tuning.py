@@ -11,12 +11,12 @@ small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(
 """
 
 import tensorflow as tf
-import numpy as np
+#import numpy as np
 from model.bert_model import BertModel
-from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config
+from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config,get_lable2index
 import os
 from evaluation_matrix import *
-from model.config_transformer import Config
+#from model.config_transformer import Config
 #configuration
 FLAGS=tf.app.flags.FLAGS
 
@@ -54,16 +54,18 @@ tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
 tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 def main(_):
-    # todo need load vocabulary of tokens from pretrain, but labels from real task.
-    vocab_word2index, label2index= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
+    # 1.load vocabulary of token from cache file save from pre-trained stage; load label dict from training file; print some message.
+    vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
+    label2index=get_lable2index(FLAGS.data_path,FLAGS.training_data_file, tokenize_style=FLAGS.tokenize_style)
     vocab_size = len(vocab_word2index);print("cnn_model.vocab_size:",vocab_size);num_classes=len(label2index);print("num_classes:",num_classes)
+    # load training data.
     train,valid, test= load_data_multilabel(FLAGS.data_path,FLAGS.training_data_file,FLAGS.valid_data_file,FLAGS.test_data_file,vocab_word2index,label2index,FLAGS.sequence_length,
                                             process_num=FLAGS.process_num,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
     train_X, train_Y= train
     valid_X, valid_Y= valid
     test_X,test_Y = test
     print("test_model:",FLAGS.test_mode,";length of training data:",train_X.shape,";valid data:",valid_X.shape,";test data:",test_X.shape,";train_Y:",train_Y.shape)
-    # 1.create session.
+    # 2.create session.
     gpu_config=tf.ConfigProto()
     gpu_config.gpu_options.allow_growth=True
     with tf.Session(config=gpu_config) as sess:
@@ -84,7 +86,7 @@ def main(_):
                 vocabulary_index2word={index:word for word,index in vocab_word2index.items()}
                 assign_pretrained_word_embedding(sess, vocabulary_index2word, vocab_size,FLAGS.word2vec_model_path,model.embedding,config.d_model) # assign pretrained word embeddings
         curr_epoch=sess.run(model.epoch_step)
-        # 2.feed data & training
+        # 3.feed data & training
         number_of_training_data=len(train_X)
         batch_size=FLAGS.batch_size
         iteration=0
@@ -134,7 +136,7 @@ def main(_):
                     print(i, "Going to decay learning rate by half.")
                     sess.run(model.learning_rate_decay_half_op)
 
-        # 5.最后在测试集上做测试，并报告测试准确率 Testto 0.0
+        # 5.report on test set
         loss_test, f1_macro_test, f1_micro_test=do_eval(sess, model, test,num_classes, label2index)
         f1_score_test=((f1_macro_test + f1_micro_test) / 2.0) * 100.0
         print("Test.Epoch %d TestLoss:%.3f\tF1_score:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t" % (epoch, loss_test, f1_score_test,f1_macro_test, f1_micro_test))
@@ -163,7 +165,6 @@ def do_eval(sess,model,valid,num_classes,label2index):
         feed_dict = {model.input_x: valid_x[start:end],model.input_y:valid_y[start:end],model.dropout_keep_prob: 1.0}
         curr_eval_loss, logits= sess.run([model.loss_val,model.logits],feed_dict) # logits：[batch_size,label_size]
         #compute confuse matrix
-        print("valid_y[start:end]:",valid_y[start:end],";logits:",logits)
         label_dict=compute_confuse_matrix_batch(valid_y[start:end],logits,label_dict,name='bright')
         eval_loss=eval_loss+curr_eval_loss
         eval_counter=eval_counter+1

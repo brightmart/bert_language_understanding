@@ -162,9 +162,6 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
 
             # 2. transform label to y
             label_list = [label2index[label] for label in input_labels]
-            print("input_labels:",input_labels)
-            iii=0
-            iii/0
             y = transform_multilabel_as_multihot(label_list, label_size)
 
             X.append(x_list)
@@ -208,7 +205,7 @@ def transform_mulitihot_as_dense_list(multihot_list):
     result_list=[i for i in range(length) if multihot_list[i] > 0]
     return result_list
 
-def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=False,tokenize_style='word'):
+def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=False,tokenize_style='word',fine_tuning_stage=False):
     """
     create or load vocabulary and label using training data.
     process as: load from cache if exist; load data, count and get vocabularies and labels, save to file.
@@ -282,6 +279,38 @@ def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=
     t2 = time.clock()
     print('create_vocabulary.ended.time spent for generate training data:', (t2 - t1))
     return vocab_word2index, label2index
+
+def get_lable2index(data_path,training_data_path,tokenize_style='word'):
+    """
+    get dict of lable to index.
+    :param lines: lines from input file
+    :param tokenize_style:
+    :return:
+    """
+    cache_file =data_path+"/"+'fine_tuning_label.pik'
+    if os.path.exists(cache_file):
+        with open(cache_file, 'rb') as data_f:
+            print("going to load cache file of label for fine-tuning.")
+            return pickle.load(data_f)
+    file_object = codecs.open(training_data_path, mode='r', encoding='utf-8')
+    lines=file_object.readlines()
+    c_labels=Counter()
+    for i,line in enumerate(lines):
+        _,input_label=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
+        c_labels.update(input_label)
+        if i % 1000 == 0: # print some information for debug purpose
+            print(i,"get_lable2index.line:",line);print(i,"get_lable2index.input_label:",input_label)
+    label2index={}
+    label_list=c_labels.most_common()
+    for i,tuplee in enumerate(label_list):
+        label_name, freq = tuplee
+        label_name=label_name.strip()
+        label2index[label_name]=i
+    if not os.path.exists(cache_file):
+        with open(cache_file, 'ab') as data_f:
+            print("going to save label dict for fine-tuning.")
+            pickle.dump(label2index, data_f)
+    return label2index
 
 def get_input_strings_and_labels(line,tokenize_style='word'):
     """
