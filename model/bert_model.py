@@ -77,6 +77,7 @@ class BertModel:
 
     def inference_lm(self):
         """
+        this is for pre-trained language model.
         main inference logic here: invoke transformer model to do inference,input is a sequence, output is also a sequence, get representation of masked token(s) and use a classifier
         to train the model.
         # idea of the hidden state of masked position(s):
@@ -110,6 +111,7 @@ class BertModel:
 
     def inference(self):
         """
+        this is for fine-tuning.
         main inference logic here: invoke transformer model to do inference,input is a sequence, output is also a sequence, get representation of masked token(s) and use a classifier
         to train the model.
         # idea of the hidden state of masked position(s):
@@ -195,7 +197,7 @@ class BertModel:
             self.position_embeddings_lm = tf.get_variable("position_embeddings_lm", [self.sequence_length_lm, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
 
             #self.segment_embeddings = tf.get_variable("segment_embeddings", [self.d_model],initializer=tf.constant_initializer(1.0))  # a learned sequence embedding
-            self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length, self.d_model],initializer=tf.constant_initializer(1.0))  # sequence_length,1]
+            self.position_embeddings = tf.get_variable("position_embeddings", [self.sequence_length,self.d_model],initializer=tf.constant_initializer(1.0))  # [sequence_length,self.d_model]
 
 
 # train the model on toy task: learn to count,sum up input, and distinct whether the total value of input is below or greater than a threshold.

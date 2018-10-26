@@ -16,7 +16,7 @@ nighty_percentage=0.9
 """
 data generator for two tasks: 1. masked language mode; 2. predict next sentence 
 """
-def mask_language_model(source_file,target_file,index2word,max_allow_sentence_length=10,test_mode=False):
+def mask_language_model(source_file,target_file,index2word,max_allow_sentence_length=10,test_mode=False,process_num=10):
     """
     generate data for perform mask language model.
     :parameter source_file: source file where raw data come from

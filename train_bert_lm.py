@@ -128,13 +128,12 @@ def do_eval(sess,model,valid,batch_size):
     number_examples=valid_X.shape[0]
     if number_examples>10000:
         number_examples=validation_size
-        #valid_X, valid_y, valid_p=valid_X[0:validation_size],valid_y[0:validation_size],valid_p[0:validation_size]
     print("do_eval.valid.number_examples:",number_examples)
     if number_examples>validation_size: valid_X,valid_y,valid_p=valid_X[0:validation_size],valid_y[0:validation_size],valid_p[0:validation_size]
     eval_loss,eval_counter,eval_acc=0.0,0,0.0
     for start,end in zip(range(0,number_examples,batch_size),range(batch_size,number_examples,batch_size)):
         feed_dict = {model.x_mask_lm: valid_X[start:end],model.y_mask_lm: valid_y[start:end],model.p_mask_lm:valid_p[start:end],
-                     model.dropout_keep_prob: FLAGS.dropout_keep_prob}
+                     model.dropout_keep_prob: 1.0} # FLAGS.dropout_keep_prob
         curr_eval_loss, logits_lm, accuracy_lm= sess.run([model.loss_val_lm,model.logits_lm,model.accuracy_lm],feed_dict) # logits：[batch_size,label_size]
         eval_loss=eval_loss+curr_eval_loss
         eval_acc=eval_acc+accuracy_lm

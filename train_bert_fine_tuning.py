@@ -192,8 +192,10 @@ def optimistic_restore(session, save_file):
       curr_var = name2var[saved_var_name]
       var_shape = curr_var.get_shape().as_list()
       if var_shape == saved_shapes[saved_var_name]:
-          print("going to restore.var_name:",var_name,";saved_var_name:",saved_var_name)
+          #print("going to restore.var_name:",var_name,";saved_var_name:",saved_var_name)
           restore_vars.append(curr_var)
+      else:
+          print("variable not trained.var_name:",var_name)
   saver = tf.train.Saver(restore_vars)
   saver.restore(session, save_file)
 

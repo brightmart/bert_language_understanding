@@ -211,11 +211,21 @@ it will print loss during training,  and print f1 score for each epoch during va
 ##  TODO
 1.special handle first token [cls] as input and classification [DONE]
 
-2.position embedding is not shared between with pretrain and fine-tuning yet.
+2.position embedding is not shared between with pretrain and fine-tuning yet. since here on pre-train stage length is shorter than 
+
+fine-tuning stage.
 
 3.pre-train withfine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
 
-    
+4.learning rate should be smaller when fine-tuning.
+
+## Problems Need to be Solved
+1. [top problem currently] 
+why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
+
+more pre-train data, loss is still not small.
+
+
 ## Reference
 1. <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
 
