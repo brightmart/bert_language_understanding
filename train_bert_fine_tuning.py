@@ -54,6 +54,7 @@ tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
 tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
 
 def main(_):
+    # todo need load vocabulary of tokens from pretrain, but labels from real task.
     vocab_word2index, label2index= create_or_load_vocabulary(FLAGS.data_path,FLAGS.training_data_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
     vocab_size = len(vocab_word2index);print("cnn_model.vocab_size:",vocab_size);num_classes=len(label2index);print("num_classes:",num_classes)
     train,valid, test= load_data_multilabel(FLAGS.data_path,FLAGS.training_data_file,FLAGS.valid_data_file,FLAGS.test_data_file,vocab_word2index,label2index,FLAGS.sequence_length,
@@ -151,6 +152,7 @@ def do_eval(sess,model,valid,num_classes,label2index):
     :return:
     """
     number_examples=valid[0].shape[0]
+    valid=valid[0:64*15] # todo
     valid_x,valid_y=valid
     print("number_examples:",number_examples)
     eval_loss,eval_counter=0.0,0
@@ -161,6 +163,7 @@ def do_eval(sess,model,valid,num_classes,label2index):
         feed_dict = {model.input_x: valid_x[start:end],model.input_y:valid_y[start:end],model.dropout_keep_prob: 1.0}
         curr_eval_loss, logits= sess.run([model.loss_val,model.logits],feed_dict) # logits：[batch_size,label_size]
         #compute confuse matrix
+        print("valid_y[start:end]:",valid_y[start:end],";logits:",logits)
         label_dict=compute_confuse_matrix_batch(valid_y[start:end],logits,label_dict,name='bright')
         eval_loss=eval_loss+curr_eval_loss
         eval_counter=eval_counter+1

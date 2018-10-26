@@ -150,7 +150,7 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
     X = []
     Y= []
     label_size=len(label2index)
-    print("label2index:",label2index)
+    print("###################label2index:",label2index)
     for i, line in enumerate(lines):
         try:
             # 1. transform input string to x
@@ -162,6 +162,9 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
 
             # 2. transform label to y
             label_list = [label2index[label] for label in input_labels]
+            print("input_labels:",input_labels)
+            iii=0
+            iii/0
             y = transform_multilabel_as_multihot(label_list, label_size)
 
             X.append(x_list)
@@ -170,7 +173,7 @@ def transform_data_to_index(lines,target_file_path,vocab_word2index,label2index,
                 print(data_type,i,"transform_data_to_index.line:",line,";x_list:",x_list)
                 print(data_type,i,"transform_data_to_index.input_labels:",input_labels,";label_list:",label_list,";y:",y)
         except Exception as e:
-            if random.randint(0, 500) == 1:print("ignore line. you may be in test_model=True, label may not exist.",line,e)
+            if random.randint(0, 10) == 1:print("ignore line. you may be in test_model=True, label may not exist.",line,e)
     X=np.array(X)
     Y = np.array(Y)
 
@@ -291,6 +294,7 @@ def get_input_strings_and_labels(line,tokenize_style='word'):
     input_list = token_string_as_list(input_strings, tokenize_style=tokenize_style)
     input_labels = element_list[1:]
     input_labels=[str(label).strip() for label in input_labels if label.strip()]
+    #print("get_input_strings_and_labels.line:",line,";element_list:",element_list,";input_labels:",input_labels) # input_labels: ['1']
     return input_list,input_labels
 
 def token_string_as_list(string,tokenize_style='word'):

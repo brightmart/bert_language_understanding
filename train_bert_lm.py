@@ -15,13 +15,14 @@ from model.bert_model import BertModel
 from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config
 import os
 from evaluation_matrix import *
-from pretrain_task import mask_language_model
+from pretrain_task import mask_language_model,mask_language_model_multi_processing
 from model.config import Config
 import random
 
 #configuration
 FLAGS=tf.app.flags.FLAGS
 
+tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
 tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
@@ -47,13 +48,15 @@ tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.")
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
-tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
+tf.app.flags.DEFINE_integer("process_num",3,"number of cpu process")
 
 def main(_):
     vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.mask_lm_source_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
     vocab_size = len(vocab_word2index);print("bert_pertrain_lm.vocab_size:",vocab_size)
     index2word={v:k for k,v in vocab_word2index.items()}
-    train,valid,test=mask_language_model(FLAGS.mask_lm_source_file,FLAGS.data_path,index2word,max_allow_sentence_length=FLAGS.max_allow_sentence_length,test_mode=FLAGS.test_mode)
+    #train,valid,test=mask_language_model(FLAGS.mask_lm_source_file,FLAGS.data_path,index2word,max_allow_sentence_length=FLAGS.max_allow_sentence_length,test_mode=FLAGS.test_mode)
+    train, valid, test = mask_language_model(FLAGS.mask_lm_source_file, FLAGS.data_path, index2word, max_allow_sentence_length=FLAGS.max_allow_sentence_length,test_mode=FLAGS.test_mode, process_num=FLAGS.process_num)
+
     train_X, train_y,train_p = train
     valid_X, valid_y,valid_p = valid
     test_X,test_y,test_p = test
@@ -71,9 +74,9 @@ def main(_):
         if os.path.exists(FLAGS.ckpt_dir+"checkpoint"):
             print("Restoring Variables from Checkpoint.")
             saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
-            #for i in range(2): #decay learning rate if necessary.
-            #    print(i,"Going to decay learning rate by half.")
-            #    sess.run(model.learning_rate_decay_half_op)
+            for i in range(2): #decay learning rate if necessary.
+                print(i,"Going to decay learning rate by half.")
+                sess.run(model.learning_rate_decay_half_op)
         else:
             print('Initializing Variables')
             sess.run(tf.global_variables_initializer())
