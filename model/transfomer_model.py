@@ -12,7 +12,7 @@ import numpy as np
 from model.encoder import Encoder
 from model.config_transformer import Config
 import os
-#os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 class TransformerModel:
     def __init__(self,config):
