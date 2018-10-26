@@ -213,7 +213,7 @@ it will print loss during training,  and print f1 score for each epoch during va
 
 2.position embedding is not shared between with pretrain and fine-tuning yet.
 
-3.pre-train withfine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task.
+3.pre-train withfine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
 
     
 ## Reference
