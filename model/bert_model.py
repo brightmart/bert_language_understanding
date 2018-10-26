@@ -148,7 +148,7 @@ class BertModel:
         transoform each sub task using one-layer MLP ,then get logits.
         get some insights from densely connected layers from recently development
         """
-        cls_representation = h[:, 1, :] # [CLS] token's information: classification task's representation
+        cls_representation = h[:, 0, :] # [CLS] token's information: classification task's representation
         logits = tf.layers.dense(cls_representation, self.num_classes)   # shape:[None,self.num_classes]
         logits = tf.nn.dropout(logits,keep_prob=self.dropout_keep_prob)  # shape:[None,self.num_classes]
         return logits

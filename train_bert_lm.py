@@ -30,8 +30,8 @@ tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
 tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
 tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
-tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
-tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
+tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64
+tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64
 
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 tf.app.flags.DEFINE_integer("max_allow_sentence_length",10,"max length of allowed sentence for masked language model")

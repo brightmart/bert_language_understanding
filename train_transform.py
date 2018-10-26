@@ -25,11 +25,11 @@ tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
 tf.app.flags.DEFINE_string("training_data_file","./data/bert_train.txt","path of traning data.") #./data/cail2018_bi.json
 tf.app.flags.DEFINE_string("valid_data_file","./data/bert_test.txt","path of validation data.")
 tf.app.flags.DEFINE_string("test_data_file","./data/bert_test.txt","path of validation data.")
-tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
+tf.app.flags.DEFINE_integer("d_model", 128, "dimension of model") # 512-->128-->64
 tf.app.flags.DEFINE_integer("num_layer", 6, "number of layer")
 tf.app.flags.DEFINE_integer("num_header", 8, "number of header")
-tf.app.flags.DEFINE_integer("d_k", 8, "dimension of k") # 64-->16
-tf.app.flags.DEFINE_integer("d_v", 8, "dimension of v") # 64-->16
+tf.app.flags.DEFINE_integer("d_k", 16, "dimension of k") # 64-->16-->8
+tf.app.flags.DEFINE_integer("d_v", 16, "dimension of v") # 64-->16-->8
 
 # below hyperparameter you can use default one, seldom change
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_transformer/","checkpoint location for the model") #save to here, so make it easy to upload for test
