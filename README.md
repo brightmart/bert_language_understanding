@@ -26,6 +26,17 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
 
+## Performance 
+
+Model                        | TextCNN(No-pretrain) |TextCNN(Pretrain-Finetuning)|
+---                          | ---                 | ---
+Training Loss at begining    |  68.5               | 8.2 
+Validation Loss after 1 epoch|  55.1               | 1.0
+F1 Score after 1 epoch       |  0.44               | 0.57
+
+--------------------------------------------------------------------------------------------------
+Notice: training size is around 100k, number of classes is 9, for each input there exist one or more label(s).
+
 ## Long Description from author
 The basic idea is very simple. For several years, people have been getting very good results "pre-training" DNNs as a language model 
 
