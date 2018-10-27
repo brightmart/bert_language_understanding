@@ -257,13 +257,15 @@ it will print loss during training,  and print f1 score for each epoch during va
 ##  TODO
 1.special handle first token [cls] as input and classification [DONE]
 
-2.position embedding is not shared between with pretrain and fine-tuning yet. since here on pre-train stage length is shorter than 
+2.position embedding is not shared between with pretrain and fine-tuning yet. since here on pre-train stage length is 
 
-fine-tuning stage.
+shorter than fine-tuning stage.
 
-3.pre-train withfine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
+3.pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
 
-4.learning rate should be smaller when fine-tuning.
+4.learning rate should be smaller when fine-tuning. [None]
+
+5.support sentence pair task.
 
 ## Problems Need to be Solved
 1. [top problem currently] 
