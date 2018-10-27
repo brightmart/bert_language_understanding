@@ -1,17 +1,29 @@
 # bert_language_understanding
-Pre-training of Deep Bidirectional Transformers for Language Understanding
+Pre-train is all you need!
 
- Update: The majority part of replicate main ideas of these two papers was done.
+An tensorflow implementation of Pre-training of Deep Bidirectional Transformers for Language Understanding
 
-This repository is trying to solve some language understanding problems using technology developed in recent years.
+and Attention is all you need(Transformer)
+
+Update: The majority part of replicate main ideas of these two papers was done, there is a apparent performance gain 
+  
+for pre-train a model & fine-tuning compare to train the model from scratch.
+
+We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that pre-train
+
+the model with masked language model using lots of raw data can boost performance in a notable amount. More generally,
+
+we believe that pre-train and fine-tuning strategy is model independent and pre-train task independent. with that being said,
+
+you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as you can, pre-train will not be limited to masked language model 
+
+and or predict next sentence task. 
  
-It is be an implement of 'Attention Is All You Need'(Transformer) and 
-
-'Pre-training of Deep Bidirectional Transformers for Language Understanding'. While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
+While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
 implementation of Transformer and BERT official implementation coming soon, but there are/may hard to read, not easy to understand. 
 
-We will not try to replicate original papers entirely, but instead to understand and apply main ideas to solve really problem.
+We are not intent to replicate original papers entirely, but to apply the main ideas and solve nlp problem in a better way.
 
 The majority part fo work here was done by another repository last year: <a href='https://github.com/brightmart/text_classification'>text classification</a>
 
