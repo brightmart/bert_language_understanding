@@ -26,14 +26,16 @@ tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
 tf.app.flags.DEFINE_string("training_data_file","./data/bert_train.txt","path of traning data.") #./data/cail2018_bi.json
 tf.app.flags.DEFINE_string("valid_data_file","./data/bert_train.txt","path of validation data.")
 tf.app.flags.DEFINE_string("test_data_file","./data/bert_test.txt","path of validation data.")
-tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
+tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model for restore from pre-train") #save to here, so make it easy to upload for test
+tf.app.flags.DEFINE_string("ckpt_dir_save","./checkpoint_lm_save/","checkpoint location for the model for save fine-tuning") #save to here, so make it easy to upload for test
+
 tf.app.flags.DEFINE_string("tokenize_style","word","checkpoint location for the model")
 
 tf.app.flags.DEFINE_integer("vocab_size",50000,"maximum vocab size.")
 tf.app.flags.DEFINE_float("learning_rate",0.00001,"learning rate") #0.001
 tf.app.flags.DEFINE_integer("batch_size", 64, "Batch size for training/evaluating.") # 32-->128
-tf.app.flags.DEFINE_integer("decay_steps", 1000, "how many steps before decay learning rate.") # 32-->128
-tf.app.flags.DEFINE_float("decay_rate", 1.0, "Rate of decay for learning rate.") #0.65
+tf.app.flags.DEFINE_integer("decay_steps", 10000, "how many steps before decay learning rate.") # 32-->128
+tf.app.flags.DEFINE_float("decay_rate", 0.9, "Rate of decay for learning rate.") #0.65
 tf.app.flags.DEFINE_float("dropout_keep_prob", 0.9, "percentage to keep when using dropout.") #0.65
 tf.app.flags.DEFINE_integer("sequence_length",200,"max sentence length")#400
 tf.app.flags.DEFINE_integer("sequence_length_lm",10,"max sentence length for masked language model")
@@ -79,6 +81,9 @@ def main(_):
         if os.path.exists(FLAGS.ckpt_dir+"checkpoint"):
             print("Restoring Variables from Checkpoint.")
             sess.run(tf.global_variables_initializer())
+            for i in range(2): #decay learning rate if necessary.
+                print(i,"Going to decay learning rate by a factor of "+str(FLAGS.decay_rate))
+                sess.run(model.learning_rate_decay_half_op)
             # restore those variables that names and shapes exists in your model from checkpoint. for detail check: https://gist.github.com/iganichev/d2d8a0b1abc6b15d4a07de83171163d4
             optimistic_restore(sess, tf.train.latest_checkpoint(FLAGS.ckpt_dir)) #saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
         else:
@@ -106,14 +111,14 @@ def main(_):
                 loss_total,counter=loss_total+current_loss,counter+1
                 if counter %30==0:
                     print("Learning rate:%.5f\tLoss:%.3f\tCurrent_loss:%.3f\tL2_loss%.3f\t"%(lr,float(loss_total)/float(counter),current_loss,l2_loss))
-                if start!=0 and start%(3000*FLAGS.batch_size)==0:
+                if start!=0 and start%(4000*FLAGS.batch_size)==0:
                     loss_valid, f1_macro_valid, f1_micro_valid= do_eval(sess, model, valid,num_classes,label2index)
                     f1_score_valid=((f1_macro_valid+f1_micro_valid)/2.0) #*100.0
                     print("Valid.Epoch %d ValidLoss:%.3f\tF1_score_valid:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t" % (epoch, loss_valid, f1_score_valid, f1_macro_valid, f1_micro_valid))
 
                     # save model to checkpoint
                     if f1_score_valid>score_best:
-                        save_path = FLAGS.ckpt_dir + "model.ckpt"
+                        save_path = FLAGS.ckpt_dir_save + "model.ckpt"
                         print("going to save check point.")
                         saver.save(sess, save_path, global_step=epoch)
                         score_best=f1_score_valid
@@ -129,7 +134,7 @@ def main(_):
                 print("Valid.Epoch %d ValidLoss:%.3f\tF1 score:%.3f\tMacro_f1:%.3f\tMicro_f1:%.3f\t"% (epoch,loss_valid,f1_score_valid2,f1_macro_valid2,f1_micro_valid2))
                 #save model to checkpoint
                 if f1_score_valid2 > score_best:
-                    save_path=FLAGS.ckpt_dir+"model.ckpt"
+                    save_path=FLAGS.ckpt_dir_save+"model.ckpt"
                     print("going to save check point.")
                     saver.save(sess,save_path,global_step=epoch)
                     score_best = f1_score_valid2
