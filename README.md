@@ -11,11 +11,11 @@ for pre-train a model & fine-tuning compare to train the model from scratch.
 
 We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that 
 
-pre-train the model with masked language model using lots of raw data can boost performance in a notable amount. More generally,
+pre-train the model with masked language model using lots of raw data can boost performance in a notable amount. 
 
-we believe that pre-train and fine-tuning strategy is model independent and pre-train task independent. with that being 
+More generally, we believe that pre-train and fine-tuning strategy is model independent and pre-train task independent. 
 
-said, you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as 
+with that being said, you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as 
 
 you can, pre-train will not be limited to masked language model and or predict next sentence task. 
  
@@ -144,7 +144,7 @@ each line is a sentence or serveral sentences( that is raw data you can get easi
 check 'data' folder for sample data.
 
 
-## Pretrain Language Understanding Task
+## Pretrain Language Understanding Task 
 
 ### task 1: masked language model
  
@@ -192,6 +192,29 @@ check 'data' folder for sample data.
 
 ## Environment
 python 3+ tensorflow 1.10
+
+## Implementation Details
+1. what share and not share beteween pre-train and fine-tuning stages?
+
+   1).basically, all of parameters of backbone network used by pre-train and fine-tuning stages are shared each other.
+   
+   2).as we can to share parameters as much as possible, so that during fine-tuning stage we need to learn as few 
+   
+   parameter as possible, we also shared word embedding for these two stages.
+   
+   3).therefore most of parameters were already learned at the beginning of fine-tuning stage.
+   
+2. how we implement masked language model?
+   
+   to make things easily, we generate sentences from documents, split them into sentences. for each sentence
+   
+   we trancuate and padding it to same length, and random select a word, then replace it with [MASK], its self and a random 
+   
+   word.
+   
+3. how to make fine-tuning stage more efficient, while not break result and knowledge we learned from pre-train stage?
+   
+   we use a small learning rate during fine-tuning, so that adjust was done in a tiny extent.
 
 ## Better Understanding of Transformer and BERT
 
@@ -252,9 +275,9 @@ more pre-train data, loss is still not small.
 
 1. pre-train is all you need. while using transformer or some other complex deep model can help you achieve top performance
 
-in some tasks, pretrain with other model like textcnn using huge amount of raw data then fine-tuning your model on task specific data set, 
+   in some tasks, pretrain with other model like textcnn using huge amount of raw data then fine-tuning your model on task specific data set, 
 
-will always help you gain additional performance.
+   will always help you gain additional performance.
 
 2. add more here.
 
@@ -265,4 +288,8 @@ will always help you gain additional performance.
 2. <a href='https://arxiv.org/abs/1810.04805'>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
 
 3. <a href='https://github.com/tensorflow/tensor2tensor'>Tensor2Tensor for Neural Machine Translation</a>
+
+4. <a href='https://arxiv.org/abs/1408.5882'>Convolutional Neural Networks for Sentence Classification</a>
+
+
 
