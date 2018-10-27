@@ -12,7 +12,9 @@ small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(
 
 import tensorflow as tf
 #import numpy as np
-from model.bert_model import BertModel
+#from model.bert_model import BertModel # TODO TODO TODO test whether pretrain can boost perofrmance with other model
+from model.bert_cnn_model import BertCNNModel as BertModel
+
 from data_util_hdf5 import create_or_load_vocabulary,load_data_multilabel,assign_pretrained_word_embedding,set_config,get_lable2index
 import os
 from evaluation_matrix import *

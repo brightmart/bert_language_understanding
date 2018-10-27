@@ -44,7 +44,7 @@ def build_chunk(lines, chunk_num=10):
             chunks.append(lines[int(i * chunk_size):int((i + 1) * chunk_size)])
     return chunks
 
-def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_path,vocab_word2index,label2index,sentence_len,process_num=20,test_mode=False,tokenize_style='word'):
+def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_path,vocab_word2index,label2index,sentence_len,process_num=20,test_mode=False,tokenize_style='word',model_name=None):
     """
     convert data as indexes using word2index dicts.
     1) use cache file if exist; 2) read source files; 3)transform to train/valid data to standardized format; 4)save to file system if data not exists
@@ -57,7 +57,11 @@ def load_data_multilabel(data_path,traning_data_path,valid_data_path,test_data_p
     print("###load_data_multilabel.data_path:",data_path,";traning_data_path:",traning_data_path,";valid_data_path:",valid_data_path,";test_data_path:",test_data_path)
     print("###vocab_word2index:",len(vocab_word2index),";label2index:",len(label2index),";sentence_len:",sentence_len)
     # 1. use cache file if exist
-    cache_file =data_path+"/"+'train_valid_test.h5'
+    if model_name is not None:
+        cache_file =data_path+"/"+model_name+'train_valid_test.h5'
+    else:
+        cache_file =data_path+"/"+'train_valid_test.h5'
+
     cache_file_exist_flag=os.path.exists(cache_file)
     print("cache_path:",cache_file,"train_valid_test_file_exists:",cache_file_exist_flag,";traning_data_path:",traning_data_path,";valid_data_path:",valid_data_path)
     if cache_file_exist_flag:
@@ -205,7 +209,7 @@ def transform_mulitihot_as_dense_list(multihot_list):
     result_list=[i for i in range(length) if multihot_list[i] > 0]
     return result_list
 
-def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=False,tokenize_style='word',fine_tuning_stage=False):
+def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=False,tokenize_style='word',fine_tuning_stage=False,model_name=None):
     """
     create or load vocabulary and label using training data.
     process as: load from cache if exist; load data, count and get vocabularies and labels, save to file.
@@ -222,7 +226,10 @@ def create_or_load_vocabulary(data_path,training_data_path,vocab_size,test_mode=
         os.makedirs(data_path)
 
     # 1.if cache exists,load it; otherwise create it.
-    cache_path =data_path+'vocab_label.pik'
+    if model_name is not None:
+        cache_path =data_path+model_name+'vocab_label.pik'
+    else:
+        cache_path =data_path+'vocab_label.pik'
     print("cache_path:",cache_path,"file_exists:",os.path.exists(cache_path))
     if os.path.exists(cache_path):
         with open(cache_path, 'rb') as data_f:
