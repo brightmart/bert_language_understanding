@@ -3,21 +3,21 @@ Pre-train is all you need!
 
 An tensorflow implementation of Pre-training of Deep Bidirectional Transformers for Language Understanding
 
-and Attention is all you need(Transformer)
+(Bert) and Attention is all you need(Transformer). BERT achieve new state of art result on more than 10 nlp tasks recently.
 
 Update: The majority part of replicate main ideas of these two papers was done, there is a apparent performance gain 
   
 for pre-train a model & fine-tuning compare to train the model from scratch.
 
-We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that pre-train
+We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that 
 
-the model with masked language model using lots of raw data can boost performance in a notable amount. More generally,
+pre-train the model with masked language model using lots of raw data can boost performance in a notable amount. More generally,
 
-we believe that pre-train and fine-tuning strategy is model independent and pre-train task independent. with that being said,
+we believe that pre-train and fine-tuning strategy is model independent and pre-train task independent. with that being 
 
-you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as you can, pre-train will not be limited to masked language model 
+said, you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as 
 
-and or predict next sentence task. 
+you can, pre-train will not be limited to masked language model and or predict next sentence task. 
  
 While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
@@ -247,6 +247,16 @@ fine-tuning stage.
 why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
 
 more pre-train data, loss is still not small.
+
+## Conclusion
+
+1. pre-train is all you need. while using transformer or some other complex deep model can help you achieve top performance
+
+in some tasks, pretrain with other model like textcnn using huge amount of raw data then fine-tuning your model on task specific data set, 
+
+will always help you gain additional performance.
+
+2. add more here.
 
 
 ## Reference
