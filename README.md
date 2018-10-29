@@ -1,13 +1,16 @@
 # bert_language_understanding
 Pre-train is all you need!
 
-An tensorflow implementation of Pre-training of Deep Bidirectional Transformers for Language Understanding
+BERT achieve new state of art result on more than 10 nlp tasks recently.
 
-(Bert) and Attention is all you need(Transformer). BERT achieve new state of art result on more than 10 nlp tasks recently.
+This is an tensorflow implementation of Pre-training of Deep Bidirectional Transformers for Language Understanding
+
+(Bert) and Attention is all you need(Transformer). 
 
 Update: The majority part of replicate main ideas of these two papers was done, there is a apparent performance gain 
   
 for pre-train a model & fine-tuning compare to train the model from scratch.
+
 
 We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that 
 
@@ -17,7 +20,14 @@ More generally, we believe that pre-train and fine-tuning strategy is model inde
 
 with that being said, you can replace backbone network as you like. and add more pre-train tasks or define some new pre-train tasks as 
 
-you can, pre-train will not be limited to masked language model and or predict next sentence task. 
+you can, pre-train will not be limited to masked language model and or predict next sentence task. What surprise us is that,
+
+with a middle size data set that say, one million, even without use external data, with the help of pre-train task like masked language
+
+model, performance can be boost in a big margin, and the model can converge even fast. sometime training can be in a only need a few epoch
+
+in fine-tuning stage.
+
  
 While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
@@ -125,9 +135,13 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
     or want to train a small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(tiny).
   
  
-## Data Format and Sample Data
+## Sample Data, Data Format & Suggestion to User
 
-##### for train transform:
+##### for pre-train stage 
+each line is document(several sentences) or a sentence. that is free-text you can get easily.
+
+
+##### for data used on fine-tuning stage:
 
 input and output is in the same line, each label is start with '__label__'. 
 
@@ -138,11 +152,30 @@ token1 token2 token3 __label__l1 __label__l5 __label__l3
 
 token1 token2 token3 __label__l2 __label__l4
 
+
+check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-zzqv-abWZ74w2Q'>down load a middle size data set here, 
+
+with 450k 206 classes</a>each input is a document, average length is around 300, one or multi-label associate with input.
+
+##### Suggestion to User
+
+1. things can be easy: 1) download dataset(around 200M),2) run step 1 for pre-train, 3) and run step 2 for fine-tuning.
+
+2. i finish above three steps, and want to have a better performance, how can i do further. do i need to find a big dataset?
+
+No. you can generate a big data set yourself for pre-train stage by downloading some free-text, make sure each line is a 
+
+document or sentence then replace data/bert_train2.txt with your new data file.
+
+3. what's more?
+
+try some big hyper-parameter or big model(by replacing backbone network) util you can observe all your pre-train data.
+
+play around with model:model/bert_cnn_model.py, or check pre-process with data_util_hdf5.py.
+
+
+
 ##### for pre-train masked language with BERT:
-
-each line is a sentence or serveral sentences( that is raw data you can get easily)
-
-check 'data' folder for sample data.
 
 
 ## Pretrain Language Understanding Task 

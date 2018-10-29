@@ -12,7 +12,7 @@ import numpy as np
 from model.encoder import Encoder
 from model.config import Config
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 
 class BertCNNModel:
     def __init__(self,config):

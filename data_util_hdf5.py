@@ -301,6 +301,8 @@ def get_lable2index(data_path,training_data_path,tokenize_style='word'):
             return pickle.load(data_f)
     file_object = codecs.open(training_data_path, mode='r', encoding='utf-8')
     lines=file_object.readlines()
+    random.shuffle(lines)
+    lines=lines[0:60000] # only read 100k lines to make training fast
     c_labels=Counter()
     for i,line in enumerate(lines):
         _,input_label=get_input_strings_and_labels(line, tokenize_style=tokenize_style)
