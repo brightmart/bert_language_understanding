@@ -308,50 +308,51 @@ python 3+ tensorflow 1.10
 
 1. why we need self-attention?
 
-self-attention a new type of network recently gain more and more attention. traditonally we use 
+   self-attention a new type of network recently gain more and more attention. traditonally we use 
 
-rnn or cnn to solve problem. however rnn has a problem in parallel, and cnn is not good at model position sensitive tasks.
+   rnn or cnn to solve problem. however rnn has a problem in parallel, and cnn is not good at model position sensitive tasks.
 
-self-attention can run in parallel, while able to model long distance dependency.
+   self-attention can run in parallel, while able to model long distance dependency.
 
 
 2. what is multi-heads self-attention, what does q,k,v stand for? add something here.
 
-mulit-heads self-attention is a self-attention, while it divide and project q and k into serveral different subspace,
+   mulit-heads self-attention is a self-attention, while it divide and project q and k into serveral different subspace,
 
-then do attention. 
+   then do attention. 
 
-q stand for question, k stand for keys. for machine translation task, q is previous hidden state of decodes, k represent 
+   q stand for question, k stand for keys. for machine translation task, q is previous hidden state of decodes, k represent 
 
-hidden states of encoder. each of element of k will compute a similiarity score with q. and then softmax will be used
+   hidden states of encoder. each of element of k will compute a similiarity score with q. and then softmax will be used
 
-to do normalize score, we will get weights. finally a weighted sum is computed by using weights apply to v.
+   to do normalize score, we will get weights. finally a weighted sum is computed by using weights apply to v.
 
-but in self-attention scenario, q,k,v are all the same, as the representation of input sequences of a task.
+   but in self-attention scenario, q,k,v are all the same, as the representation of input sequences of a task.
 
 3. what is position-wise feedfoward?
-it is a feed forward layer, also called fully connected(FC) layer. but since in Transformer, all the input and output of 
+  it is a feed forward layer, also called fully connected(FC) layer. but since in Transformer, all the input and output of 
 
-layers are sequence of vectors:[sequence_length, d_model]. we usually do FC to a vector of input. so we do it again,
+  layers are sequence of vectors:[sequence_length, d_model]. we usually do FC to a vector of input. so we do it again,
 
-but different time step has its own FC.
+  but different time step has its own FC.
 
 4. what is the main contribution of BERT?
 
-while pre-train task  already exist for many years, it introduce a new way(so called bi-directional) to do language model 
+  while pre-train task  already exist for many years, it introduce a new way(so called bi-directional) to do language model 
 
-and use it for down stream task. as data for language model is everywhere. it proved to be powerful, and hence it reshape 
+  and use it for down stream task. as data for language model is everywhere. it proved to be powerful, and hence it reshape 
 
-nlp world.
+  nlp world.
 
 5. why author use three different types of tokens when generating training data of masked language model?
 
-the authors believe that in fine-tuning stage there is no [MASK] token. so it mismatch between pre-train and fine-tuning.
+   the authors believe that in fine-tuning stage there is no [MASK] token. so it mismatch between pre-train and fine-tuning.
 
-it also force the model to attention all the context information in a sentence.
+   it also force the model to attention all the context information in a sentence.
 
 6. what made BERT model to achieve new state of art result in language understanding tasks?
-Big model, Big computation, and most importantly--New algorithm Pre-train the model using free-text data.
+
+  Big model, Big computation, and most importantly--New algorithm Pre-train the model using free-text data.
 
 ## Toy Task
 
