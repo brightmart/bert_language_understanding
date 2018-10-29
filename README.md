@@ -265,7 +265,7 @@ python 3+ tensorflow 1.10
    
    we use a small learning rate during fine-tuning, so that adjust was done in a tiny extent.
 
-## Better Understanding of Transformer and BERT
+## Questions for Better Understanding of Transformer and BERT
 
 1. why we need self-attention?
 
@@ -303,18 +303,25 @@ you can use it two solve binary classification, multi-class classification or mu
 
 it will print loss during training,  and print f1 score for each epoch during validation.
 
-##  TODO
-1.special handle first token [cls] as input and classification [DONE]
+##  TODO List
+1.fix a bug in Transformer [IMPORTANT,recruit a team member and need a merge request]
 
-2.position embedding is not shared between with pretrain and fine-tuning yet. since here on pre-train stage length is 
+2.support sentence pair task [IMPORTANT,recruit a team member and need a merge request]
+
+3.add pre-train task of next sentence prediction [IMPORTANT,recruit a team member and need a merge request]
+
+4.need a data set for sentiment analysis or text classification in english [IMPORTANT,recruit a team member and need a merge request]
+
+5.special handle first token [cls] as input and classification [DONE]
+
+6.position embedding is not shared between with pre-train and fine-tuning yet. since here on pre-train stage length may 
 
 shorter than fine-tuning stage.
 
-3.pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
+7.pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
 
-4.learning rate should be smaller when fine-tuning. [None]
+8.learning rate should be smaller when fine-tuning. [Done]
 
-5.support sentence pair task.
 
 ## Problems Need to be Solved
 1. [top problem currently] 
