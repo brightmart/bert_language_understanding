@@ -169,15 +169,15 @@ check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-z
 
 2. i finish above three steps, and want to have a better performance, how can i do further. do i need to find a big dataset?
 
-No. you can generate a big data set yourself for pre-train stage by downloading some free-text, make sure each line is a 
+     No. you can generate a big data set yourself for pre-train stage by downloading some free-text, make sure each line is a 
 
-document or sentence then replace data/bert_train2.txt with your new data file.
+     document or sentence then replace data/bert_train2.txt with your new data file.
 
 3. what's more?
 
-try some big hyper-parameter or big model(by replacing backbone network) util you can observe all your pre-train data.
+     try some big hyper-parameter or big model(by replacing backbone network) util you can observe all your pre-train data.
 
-play around with model:model/bert_cnn_model.py, or check pre-process with data_util_hdf5.py.
+     play around with model:model/bert_cnn_model.py, or check pre-process with data_util_hdf5.py.
 
 
 
@@ -380,26 +380,27 @@ you can use it two solve binary classification, multi-class classification or mu
 it will print loss during training,  and print f1 score for each epoch during validation.
 
 ## TODO List
-1.fix a bug in Transformer [IMPORTANT,recruit a team member and need a merge request]
-( Transformer: why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
+1. fix a bug in Transformer [IMPORTANT,recruit a team member and need a merge request] 
 
-more pre-train data, loss is still not small)
+   ( Transformer: why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
 
-2.support sentence pair task [IMPORTANT,recruit a team member and need a merge request]
+   more pre-train data, loss is still not small)
 
-3.add pre-train task of next sentence prediction [IMPORTANT,recruit a team member and need a merge request]
+2. support sentence pair task [IMPORTANT,recruit a team member and need a merge request]
 
-4.need a data set for sentiment analysis or text classification in english [IMPORTANT,recruit a team member and need a merge request]
+3. add pre-train task of next sentence prediction [IMPORTANT,recruit a team member and need a merge request]
 
-5.special handle first token [cls] as input and classification [DONE]
+4. need a data set for sentiment analysis or text classification in english [IMPORTANT,recruit a team member and need a merge request]
 
-6.position embedding is not shared between with pre-train and fine-tuning yet. since here on pre-train stage length may 
+5. special handle first token [cls] as input and classification [DONE]
 
-shorter than fine-tuning stage.
+6. position embedding is not shared between with pre-train and fine-tuning yet. since here on pre-train stage length may 
 
-7.pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
+     shorter than fine-tuning stage.
 
-8.learning rate should be smaller when fine-tuning. [Done]
+7. pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
+
+8. learning rate should be smaller when fine-tuning. [Done]
 
 
 ## Conclusions
