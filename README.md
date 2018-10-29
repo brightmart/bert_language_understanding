@@ -1,5 +1,25 @@
 # bert_language_understanding
-Pre-train is all you need!
+
+##Table of Contents
+####Introduction
+####Performance
+####Usage
+####Sample Data, Data Format & Suggestion to User
+####Short Description of BERT
+####Long Description of BERT from author
+####Pretrain Language Understanding Task 
+####Environment
+####Implementation Details
+####Questions for Better Understanding of Transformer and BERT
+####Toy Task
+####Multi-label Classification Task
+####TODO List
+####Conclusion
+####References
+
+
+##Introduction
+#####Pre-train is all you need!
 
 BERT achieve new state of art result on more than 10 nlp tasks recently.
 
@@ -12,6 +32,7 @@ Update: The majority part of replicate main ideas of these two papers was done, 
 for pre-train a model & fine-tuning compare to train the model from scratch.
 
 
+#####Experiment with pre-trian and fine-tuning 
 We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that 
 
 pre-train the model with masked language model using lots of raw data can boost performance in a notable amount. 
@@ -28,7 +49,7 @@ like masked language model, performance can be boost in a big margin, and the mo
 
 training can be in a only need a few epoch in fine-tuning stage.
 
- 
+#####Intention
 While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
 implementation of Transformer and BERT official implementation coming soon, but there are/may hard to read, not easy to understand. 
@@ -142,7 +163,7 @@ play around with model:model/bert_cnn_model.py, or check pre-process with data_u
 
 
 
-## Short Description:
+## Short Description of BERT:
 Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
 
 based on multiple layer self-attetion model, then fine tuning by add a classification layer.
@@ -161,7 +182,7 @@ Notice:
  
  f1 score for cail2018 is reported as micro f1 score.
 
-## Long Description from author
+## Long Description of BERT from author
 The basic idea is very simple. For several years, people have been getting very good results "pre-training" DNNs as a language model 
 
 and then fine-tuning on some downstream NLP task (question answering, natural language inference, sentiment analysis, etc.).
@@ -303,8 +324,11 @@ you can use it two solve binary classification, multi-class classification or mu
 
 it will print loss during training,  and print f1 score for each epoch during validation.
 
-##  TODO List
+## TODO List
 1.fix a bug in Transformer [IMPORTANT,recruit a team member and need a merge request]
+( Transformer: why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
+
+more pre-train data, loss is still not small)
 
 2.support sentence pair task [IMPORTANT,recruit a team member and need a merge request]
 
@@ -323,13 +347,7 @@ shorter than fine-tuning stage.
 8.learning rate should be smaller when fine-tuning. [Done]
 
 
-## Problems Need to be Solved
-1. [top problem currently] 
-why loss of pre-train stage is decrease for early stage, but loss is still not so small(e.g. loss=8.0)? even with
-
-more pre-train data, loss is still not small.
-
-## Conclusion
+## Conclusions
 
 1. pre-train is all you need. while using transformer or some other complex deep model can help you achieve top performance
 
@@ -341,7 +359,7 @@ more pre-train data, loss is still not small.
 
 Add suggestion, problem, or want to make a contribution, welcome to contact with me: brightmart@hotmail.com
 
-## Reference
+## References
 1. <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>
 
 2. <a href='https://arxiv.org/abs/1810.04805'>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
