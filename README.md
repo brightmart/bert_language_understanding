@@ -39,7 +39,7 @@ The majority part fo work here was done by another repository last year: <a href
 
 ## Performance 
 
-MIDDLE DATASET(cail2018)
+MIDDLE SIZE DATASET(cail2018, 450k)
 
 Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
 ---                          | ---                 | ---                         | -----------     
@@ -50,7 +50,7 @@ Validation Loss after 1 epoch|  13.3               | 2.1                        
 Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
 ----------------------------------------------------------------------------------------------
 
-SMALL DATASET(private)
+SMALL SIZE DATASET(private, 100k)
 
 Model                        | TextCNN(No-pretrain) | TextCNN(Pretrain-Finetuning) | Gain from pre-train 
 ---                          | ---                  | ---                          | -----------                
@@ -60,57 +60,6 @@ Training Loss at beginning    |  68.5                | 8.2                      
             
 ------------------------------------------------------------------------------------------------
 
-
-
-## Short Description:
-Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
-
-based on multiple layer self-attetion model, then fine tuning by add a classification layer.
-
-As BERT model is based on Transformer, currently we are working on add pretrain task to the model.
-
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpeg"  width="60%" height="60%" />
-
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
-
-
-Notice: 
- cail2018 is around 450k as link above.
-
- training size of private data set is around 100k, number of classes is 9, for each input there exist one or more label(s).
- 
- f1 score for cail2018 is reported as micro f1 score.
-
-## Long Description from author
-The basic idea is very simple. For several years, people have been getting very good results "pre-training" DNNs as a language model 
-
-and then fine-tuning on some downstream NLP task (question answering, natural language inference, sentiment analysis, etc.).
-
-Language models are typically left-to-right, e.g.:
-
-    "the man went to a store"
-
-     P(the | <s>)*P(man|<s> the)*P(went|<s> the man)*…
-
-The problem is that for the downstream task you usually don't want a language model, you want a the best possible contextual representation of 
-
-each word. If each word can only see context to its left, clearly a lot is missing. So one trick that people have done is to also train a 
-
-right-to-left model, e.g.:
-
-     P(store|</s>)*P(a|store </s>)*…
-
-Now you have Â two representations of each word, one left-to-right and one right-to-left, and you can concatenate them together for your downstream task.
-
-But intuitively, it would be much better if we could train a single model that wasÂ deeply bidirectional.
-
-It's unfortunately impossible to train a deep bidirectional model like a normal LM, because that would create cycles where words can indirectly
- 
-"see themselves," and the predictions become trivial.
-
-What we can do instead is the very simple trick that's used in de-noising auto-encoders, where we mask some percent of words from the input and 
-
-have to reconstruct those words from context. We call this a "masked LM" but it is often called a Cloze task.
 
 
 ## Usage
@@ -197,7 +146,55 @@ play around with model:model/bert_cnn_model.py, or check pre-process with data_u
 
 
 
-##### for pre-train masked language with BERT:
+## Short Description:
+Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
+
+based on multiple layer self-attetion model, then fine tuning by add a classification layer.
+
+As BERT model is based on Transformer, currently we are working on add pretrain task to the model.
+
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpeg"  width="60%" height="60%" />
+
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
+
+
+Notice: 
+ cail2018 is around 450k as link above.
+
+ training size of private data set is around 100k, number of classes is 9, for each input there exist one or more label(s).
+ 
+ f1 score for cail2018 is reported as micro f1 score.
+
+## Long Description from author
+The basic idea is very simple. For several years, people have been getting very good results "pre-training" DNNs as a language model 
+
+and then fine-tuning on some downstream NLP task (question answering, natural language inference, sentiment analysis, etc.).
+
+Language models are typically left-to-right, e.g.:
+
+    "the man went to a store"
+
+     P(the | <s>)*P(man|<s> the)*P(went|<s> the man)*…
+
+The problem is that for the downstream task you usually don't want a language model, you want a the best possible contextual representation of 
+
+each word. If each word can only see context to its left, clearly a lot is missing. So one trick that people have done is to also train a 
+
+right-to-left model, e.g.:
+
+     P(store|</s>)*P(a|store </s>)*…
+
+Now you have Â two representations of each word, one left-to-right and one right-to-left, and you can concatenate them together for your downstream task.
+
+But intuitively, it would be much better if we could train a single model that wasÂ deeply bidirectional.
+
+It's unfortunately impossible to train a deep bidirectional model like a normal LM, because that would create cycles where words can indirectly
+ 
+"see themselves," and the predictions become trivial.
+
+What we can do instead is the very simple trick that's used in de-noising auto-encoders, where we mask some percent of words from the input and 
+
+have to reconstruct those words from context. We call this a "masked LM" but it is often called a Cloze task.
 
 
 ## Pretrain Language Understanding Task 
