@@ -83,10 +83,6 @@ have to reconstruct those words from context. We call this a "masked LM" but it 
 
 ## Usage
 
-   ##### [basic step] to handle a classification problem with transform: 
-    
-        python train_transform.py [DONE]
-
 if you want to try BERT with pre-train of masked language model and fine-tuning. take two steps:
 
   ##### [step 1]  pre-train masked language with BERT: 
@@ -107,6 +103,11 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
    
    Notice: to help you try new idea first, you can set hypermater test_mode to True. it will only load few data, and start to training quickly.
   
+  
+   ##### [basic step] to handle a classification problem with transform: 
+    
+        python train_transform.py [DONE, but a bug exist prevent it from converge, welcome you to fix, email: brightmart@hotmail.com]
+        
   #### Optional hypermeters
   
   d_model: dimension of model.   [512]
@@ -283,6 +284,7 @@ more pre-train data, loss is still not small.
 
 2. add more here.
 
+Add suggestion, problem, or want to make a contribution, welcome to contact with me: brightmart@hotmail.com
 
 ## Reference
 1. <a href='https://arxiv.org/abs/1706.03762'>Attention Is All You Need</a>

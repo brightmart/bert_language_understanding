@@ -25,7 +25,7 @@ FLAGS=tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean("test_mode",True,"whether it is test mode. if it is test mode, only small percentage of data will be used")
 tf.app.flags.DEFINE_string("data_path","./data/","path of traning data.")
-tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train.txt","path of traning data.")
+tf.app.flags.DEFINE_string("mask_lm_source_file","./data/bert_train2.txt","path of traning data.")
 tf.app.flags.DEFINE_string("ckpt_dir","./checkpoint_lm/","checkpoint location for the model") #save to here, so make it easy to upload for test
 tf.app.flags.DEFINE_integer("vocab_size",60000,"maximum vocab size.")
 tf.app.flags.DEFINE_integer("d_model", 64, "dimension of model") # 512-->128
@@ -49,7 +49,7 @@ tf.app.flags.DEFINE_integer("num_epochs",30,"number of epochs to run.")
 tf.app.flags.DEFINE_integer("validate_every", 1, "Validate every validate_every epochs.")
 tf.app.flags.DEFINE_boolean("use_pretrained_embedding",False,"whether to use embedding or not.")#
 tf.app.flags.DEFINE_string("word2vec_model_path","./data/Tencent_AILab_ChineseEmbedding_100w.txt","word2vec's vocabulary and vectors") # data/sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5--->data/news_12g_baidubaike_20g_novel_90g_embedding_64.bin--->sgns.merge.char
-tf.app.flags.DEFINE_integer("process_num",3,"number of cpu process")
+tf.app.flags.DEFINE_integer("process_num",20,"number of cpu process")
 
 def main(_):
     vocab_word2index, _= create_or_load_vocabulary(FLAGS.data_path,FLAGS.mask_lm_source_file,FLAGS.vocab_size,test_mode=FLAGS.test_mode,tokenize_style=FLAGS.tokenize_style)
