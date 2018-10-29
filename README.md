@@ -1,21 +1,37 @@
 # bert_language_understanding
 
 ##Table of Contents
+
 ####Introduction
+
 ####Performance
+
 ####Usage
+
 ####Sample Data, Data Format & Suggestion to User
+
 ####Short Description of BERT
+
 ####Long Description of BERT from author
+
 ####Pretrain Language Understanding Task 
+
 ####Environment
+
 ####Implementation Details
+
 ####Questions for Better Understanding of Transformer and BERT
+
 ####Toy Task
+
 ####Multi-label Classification Task
+
 ####TODO List
+
 ####Conclusion
+
 ####References
+
 
 
 ##Introduction
