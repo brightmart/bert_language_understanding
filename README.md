@@ -22,11 +22,11 @@ with that being said, you can replace backbone network as you like. and add more
 
 you can, pre-train will not be limited to masked language model and or predict next sentence task. What surprise us is that,
 
-with a middle size data set that say, one million, even without use external data, with the help of pre-train task like masked language
+with a middle size data set that say, one million, even without use external data, with the help of pre-train task 
 
-model, performance can be boost in a big margin, and the model can converge even fast. sometime training can be in a only need a few epoch
+like masked language model, performance can be boost in a big margin, and the model can converge even fast. sometime 
 
-in fine-tuning stage.
+training can be in a only need a few epoch in fine-tuning stage.
 
  
 While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
@@ -51,24 +51,28 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 ## Performance 
 
 MIDDLE DATASET(cail2018)
-Model                        | TextCNN(No-pretrain) |TextCNN(Pretrain-Finetuning)| Gain from pre-train |
----                          | ---                 | ---                         | --                
-Training Loss at beginning    |  327.9             | 81.8                       |  246.1               
-Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                
-F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58    
-Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                          
-F1 Score after 5 epoch       |  0.83               | 0.58                        | 0.25             
 
---------------------------------------------------------------------------------------------------
+Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
+---                          | ---                 | ---                         | -----------               
+Training Loss at beginning   |  327.9              | 81.8                        |  246.1             
+Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                 
+F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58        
+Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
+F1 Score after 5 epoch       |  0.83               | 0.58                        | 0.25                 
+----------------------------------------------------------------------------------------------
 
 SMALL DATASET(private)
-Model                        | TextCNN(No-pretrain) |TextCNN(Pretrain-Finetuning)| Performance Gain |
----                          | ---                 | ---                         | --                
-Training Loss at begining    |  68.5               | 8.2                         |  +               
-Validation Loss after 1 epoch|  55.1               | 1.0                         |  +                
-F1 Score after 1 epoch       |  0.44               | 0.57                        | 10%+              
 
---------------------------------------------------------------------------------------------------
+Model                        | TextCNN(No-pretrain) | TextCNN(Pretrain-Finetuning) | Performance Gain 
+---                          | ---                  | ---                          | -----------                
+Training Loss at begining    |  68.5                | 8.2                          |  +               
+Validation Loss after 1 epoch|  55.1                | 1.0                          |  +                
+F1 Score after 1 epoch       |  0.44                | 0.57                         | 10%+              
+------------------------------------------------------------------------------------------------
+
+
+
+
 Notice: 
  cail2018 is around 450k as link above.
 
