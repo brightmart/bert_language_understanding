@@ -1,36 +1,38 @@
-# bert_language_understanding
+# bert for language understanding
 
 ## Table of Contents
 
-#### Introduction
+#### 1.Introduction
 
-#### Performance
+#### 2.Performance
 
-#### Usage
+#### 3.Usage
 
-#### Sample Data, Data Format & Suggestion to User
+#### 4.Sample Data, Data Format 
 
-#### Short Description of BERT
+#### 5.Suggestion to User
 
-#### Long Description of BERT from author
+#### 6.Short Description of BERT
 
-#### Pretrain Language Understanding Task 
+#### 7.Long Description of BERT from author
 
-#### Environment
+#### 8.Pretrain Language Understanding Task 
 
-#### Implementation Details
+#### 9.Environment
 
-#### Questions for Better Understanding of Transformer and BERT
+#### 10.Implementation Details
 
-#### Toy Task
+#### 11.Questions for Better Understanding of Transformer and BERT
 
-#### Multi-label Classification Task
+#### 12.Toy Task
 
-#### TODO List
+#### 13.Multi-label Classification Task
 
-#### Conclusion
+#### 14.TODO List
 
-#### References
+#### 15.Conclusion
+
+#### 16.References
 
 
 
@@ -48,7 +50,7 @@ Update: The majority part of replicate main ideas of these two papers was done, 
 for pre-train a model & fine-tuning compare to train the model from scratch.
 
 
-#####Experiment with pre-trian and fine-tuning 
+##### Experiment with pre-trian and fine-tuning 
 We have done experiment to replace backbone network of bert from Transformer to TextCNN, and the result is that 
 
 pre-train the model with masked language model using lots of raw data can boost performance in a notable amount. 
@@ -65,7 +67,7 @@ like masked language model, performance can be boost in a big margin, and the mo
 
 training can be in a only need a few epoch in fine-tuning stage.
 
-#####Intention
+##### Intention
 While there is an open source(<a href='https://github.com/tensorflow/tensor2tensor'>tensor2tensor</a>) and official
 
 implementation of Transformer and BERT official implementation coming soon, but there are/may hard to read, not easy to understand. 
@@ -161,7 +163,7 @@ check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-z
 
 </a>with 450k 206 classes, each input is a document, average length is around 300, one or multi-label associate with input.
 
-##### Suggestion to User
+## Suggestion for User
 
 1. things can be easy: 1) download dataset(around 200M),2) run step 1 for pre-train, 3) and run step 2 for fine-tuning.
 
@@ -306,15 +308,50 @@ python 3+ tensorflow 1.10
 
 1. why we need self-attention?
 
-2. what is multi-head self-attention, what does q,k,v stand for? add something here.
+self-attention a new type of network recently gain more and more attention. traditonally we use 
+
+rnn or cnn to solve problem. however rnn has a problem in parallel, and cnn is not good at model position sensitive tasks.
+
+self-attention can run in parallel, while able to model long distance dependency.
+
+
+2. what is multi-heads self-attention, what does q,k,v stand for? add something here.
+
+mulit-heads self-attention is a self-attention, while it divide and project q and k into serveral different subspace,
+
+then do attention. 
+
+q stand for question, k stand for keys. for machine translation task, q is previous hidden state of decodes, k represent 
+
+hidden states of encoder. each of element of k will compute a similiarity score with q. and then softmax will be used
+
+to do normalize score, we will get weights. finally a weighted sum is computed by using weights apply to v.
+
+but in self-attention scenario, q,k,v are all the same, as the representation of input sequences of a task.
 
 3. what is position-wise feedfoward?
+it is a feed forward layer, also called fully connected(FC) layer. but since in Transformer, all the input and output of 
+
+layers are sequence of vectors:[sequence_length, d_model]. we usually do FC to a vector of input. so we do it again,
+
+but different time step has its own FC.
 
 4. what is the main contribution of BERT?
 
+while pre-train task  already exist for many years, it introduce a new way(so called bi-directional) to do language model 
+
+and use it for down stream task. as data for language model is everywhere. it proved to be powerful, and hence it reshape 
+
+nlp world.
+
 5. why author use three different types of tokens when generating training data of masked language model?
 
-6. what made BERT model tp achieve new state of art result in language understanding tasks?
+the authors believe that in fine-tuning stage there is no [MASK] token. so it mismatch between pre-train and fine-tuning.
+
+it also force the model to attention all the context information in a sentence.
+
+6. what made BERT model to achieve new state of art result in language understanding tasks?
+Big model, Big computation, and most importantly--New algorithm Pre-train the model using free-text data.
 
 ## Toy Task
 
