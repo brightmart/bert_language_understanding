@@ -330,19 +330,20 @@ python 3+ tensorflow 1.10
    but in self-attention scenario, q,k,v are all the same, as the representation of input sequences of a task.
 
 3. what is position-wise feedfoward?
-  it is a feed forward layer, also called fully connected(FC) layer. but since in Transformer, all the input and output of 
 
-  layers are sequence of vectors:[sequence_length, d_model]. we usually do FC to a vector of input. so we do it again,
+   it is a feed forward layer, also called fully connected(FC) layer. but since in Transformer, all the input and output of 
 
-  but different time step has its own FC.
+   layers are sequence of vectors:[sequence_length, d_model]. we usually do FC to a vector of input. so we do it again,
+
+   but different time step has its own FC.
 
 4. what is the main contribution of BERT?
 
-  while pre-train task  already exist for many years, it introduce a new way(so called bi-directional) to do language model 
+   while pre-train task  already exist for many years, it introduce a new way(so called bi-directional) to do language model 
 
-  and use it for down stream task. as data for language model is everywhere. it proved to be powerful, and hence it reshape 
+   and use it for down stream task. as data for language model is everywhere. it proved to be powerful, and hence it reshape 
 
-  nlp world.
+   nlp world.
 
 5. why author use three different types of tokens when generating training data of masked language model?
 
@@ -352,7 +353,7 @@ python 3+ tensorflow 1.10
 
 6. what made BERT model to achieve new state of art result in language understanding tasks?
 
-  Big model, Big computation, and most importantly--New algorithm Pre-train the model using free-text data.
+   Big model, Big computation, and most importantly--New algorithm Pre-train the model using free-text data.
 
 ## Toy Task
 
