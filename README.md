@@ -1,41 +1,41 @@
 # bert_language_understanding
 
-##Table of Contents
+## Table of Contents
 
-####Introduction
+#### Introduction
 
-####Performance
+#### Performance
 
-####Usage
+#### Usage
 
-####Sample Data, Data Format & Suggestion to User
+#### Sample Data, Data Format & Suggestion to User
 
-####Short Description of BERT
+#### Short Description of BERT
 
-####Long Description of BERT from author
+#### Long Description of BERT from author
 
-####Pretrain Language Understanding Task 
+#### Pretrain Language Understanding Task 
 
-####Environment
+#### Environment
 
-####Implementation Details
+#### Implementation Details
 
-####Questions for Better Understanding of Transformer and BERT
+#### Questions for Better Understanding of Transformer and BERT
 
-####Toy Task
+#### Toy Task
 
-####Multi-label Classification Task
+#### Multi-label Classification Task
 
-####TODO List
+#### TODO List
 
-####Conclusion
+#### Conclusion
 
-####References
+#### References
 
 
 
-##Introduction
-#####Pre-train is all you need!
+## Introduction
+##### Pre-train is all you need!
 
 BERT achieve new state of art result on more than 10 nlp tasks recently.
 
