@@ -37,6 +37,31 @@ We are not intent to replicate original papers entirely, but to apply the main i
 
 The majority part fo work here was done by another repository last year: <a href='https://github.com/brightmart/text_classification'>text classification</a>
 
+## Performance 
+
+MIDDLE DATASET(cail2018)
+
+Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
+---                          | ---                 | ---                         | -----------     
+F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58        
+F1 Score after 5 epoch       |  0.83               | 0.58                        | 0.25                           
+Training Loss at beginning   |  327.9              | 81.8                        |  246.1             
+Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                 
+Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
+----------------------------------------------------------------------------------------------
+
+SMALL DATASET(private)
+
+Model                        | TextCNN(No-pretrain) | TextCNN(Pretrain-Finetuning) | Gain from pre-train 
+---                          | ---                  | ---                          | -----------                
+F1 Score after 1 epoch       |  0.44                | 0.57                         | 10%+  
+Validation Loss after 1 epoch|  55.1                | 1.0                          |  54.1                
+Training Loss at beginning    |  68.5                | 8.2                         | 60.3                
+            
+------------------------------------------------------------------------------------------------
+
+
+
 ## Short Description:
 Pretrain mashed language model and next sentence prediction task on large scale of corpus, 
 
@@ -47,30 +72,6 @@ As BERT model is based on Transformer, currently we are working on add pretrain 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpeg"  width="60%" height="60%" />
 
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
-
-## Performance 
-
-MIDDLE DATASET(cail2018)
-
-Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
----                          | ---                 | ---                         | -----------               
-Training Loss at beginning   |  327.9              | 81.8                        |  246.1             
-Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                 
-F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58        
-Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
-F1 Score after 5 epoch       |  0.83               | 0.58                        | 0.25                 
-----------------------------------------------------------------------------------------------
-
-SMALL DATASET(private)
-
-Model                        | TextCNN(No-pretrain) | TextCNN(Pretrain-Finetuning) | Performance Gain 
----                          | ---                  | ---                          | -----------                
-Training Loss at begining    |  68.5                | 8.2                          |  +               
-Validation Loss after 1 epoch|  55.1                | 1.0                          |  +                
-F1 Score after 1 epoch       |  0.44                | 0.57                         | 10%+              
-------------------------------------------------------------------------------------------------
-
-
 
 
 Notice: 
