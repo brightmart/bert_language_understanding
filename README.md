@@ -141,7 +141,7 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
     or want to train a small model, use d_model=128,h=8,d_k=d_v=16(small), or d_model=64,h=8,d_k=d_v=8(tiny).
   
  
-## Sample Data, Data Format & Suggestion to User
+## Sample Data & Data Format
 
 ##### for pre-train stage 
 each line is document(several sentences) or a sentence. that is free-text you can get easily.
