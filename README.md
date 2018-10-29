@@ -122,7 +122,7 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
   
    ##### [basic step] to handle a classification problem with transform: 
     
-        python train_transform.py [DONE, but a bug exist prevent it from converge, welcome you to fix, email: brightmart@hotmail.com]
+     python train_transform.py [DONE, but a bug exist prevent it from converge, welcome you to fix, email: brightmart@hotmail.com]
         
   #### Optional hypermeters
   
@@ -169,9 +169,9 @@ check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-z
 
 2. i finish above three steps, and want to have a better performance, how can i do further. do i need to find a big dataset?
 
-     No. you can generate a big data set yourself for pre-train stage by downloading some free-text, make sure each line is a 
-
-     document or sentence then replace data/bert_train2.txt with your new data file.
+     No. you can generate a big data set yourself for pre-train stage by downloading some free-text, make sure each line 
+     
+     is a document or sentence then replace data/bert_train2.txt with your new data file.
 
 3. what's more?
 
@@ -424,5 +424,5 @@ Add suggestion, problem, or want to make a contribution, welcome to contact with
 
 4. <a href='https://arxiv.org/abs/1408.5882'>Convolutional Neural Networks for Sentence Classification</a>
 
-
+5. <a href='https://arxiv.org/pdf/1807.02478.pdf'>CAIL2018: A Large-Scale Legal Dataset for Judgment Prediction</a>
 
