@@ -70,14 +70,10 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
      
      python train_bert_lm.py [DONE]
  
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/pretrain_lm.jpeg"  width="60%" height="60%" />
-
   ##### [step 2] fine-tuning:  
    
      python train_bert_fine_tuning.py [Done]
-  
-  <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/fine_tuning.jpeg"  width="80%" height="80%" />
-  
+    
    as you can see, even at the start point of fine-tuning, just after restore parameters from pre-trained model, the loss of model is smaller
    
    than training from completely new, and f1 score is also higher while new model may start from 0.
