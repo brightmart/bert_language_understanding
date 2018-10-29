@@ -39,7 +39,7 @@ The majority part fo work here was done by another repository last year: <a href
 
 ## Performance 
 
-MIDDLE SIZE DATASET(cail2018, 450k)
+MIDDLE SIZE DATASET(<a href='https://pan.baidu.com/s/1HUzBXB_-zzqv-abWZ74w2Q'>cail2018</a>, 450k)
 
 Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
 ---                          | ---                 | ---                         | -----------     
