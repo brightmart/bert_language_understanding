@@ -257,10 +257,9 @@ def process_one_chunk_lm(lines,max_allow_sentence_length,index2word,sub_target_f
             y_mask_lm.append(mask_word_indexed)  # input(y) to list
             p_mask_lm.append(index)
             # print some log
-            count = count + 1
             if i % 1000 == 0:
-                print(count, "index:", index, "i:", i, "j:", j, ";mask_word_1:", mask_word, ";string_list:",string_list)
-                print(count, "index:", index, "i:", i, "j:", j, ";mask_word_indexed:", mask_word_indexed,";string_list_indexed:", string_list_indexed)
+                print("index:", index, "i:", i, "j:", j, ";mask_word_1:", mask_word, ";string_list:",string_list)
+                print( "index:", index, "i:", i, "j:", j, ";mask_word_indexed:", mask_word_indexed,";string_list_indexed:", string_list_indexed)
     # save to file system
     X_mask_lm=np.array(X_mask_lm)
     y_mask_lm=np.array(y_mask_lm)

@@ -117,14 +117,14 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
    
    than training from completely new, and f1 score is also higher while new model may start from 0.
    
-   Notice: to help you try new idea first, you can set hypermater test_mode to True. it will only load few data, and start to training quickly.
+   Notice: to help you try new idea first, you can set hyper-paramater test_mode to True. it will only load few data, and start to training quickly.
   
   
-   ##### [basic step] to handle a classification problem with transform: 
+   ##### [basic step] to handle a classification problem with transform(optional): 
     
      python train_transform.py [DONE, but a bug exist prevent it from converge, welcome you to fix, email: brightmart@hotmail.com]
         
-  #### Optional hypermeters
+  #### Optional hyper-parameters
   
   d_model: dimension of model.   [512]
   
@@ -146,6 +146,7 @@ if you want to try BERT with pre-train of masked language model and fine-tuning.
 ##### for pre-train stage 
 each line is document(several sentences) or a sentence. that is free-text you can get easily.
 
+check data/bert_train.txt or bert_train2.txt in the zip file.
 
 ##### for data used on fine-tuning stage:
 
@@ -158,6 +159,7 @@ token1 token2 token3 __label__l1 __label__l5 __label__l3
 
 token1 token2 token3 __label__l2 __label__l4
 
+check data/bert_train.txt or bert_train2.txt in the zip file.
 
 check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-zzqv-abWZ74w2Q'>down load a middle size data set here
 
@@ -165,7 +167,13 @@ check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-z
 
 ## Suggestion for User
 
-1. things can be easy: 1) download dataset(around 200M),2) run step 1 for pre-train, 3) and run step 2 for fine-tuning.
+1. things can be easy: 
+           
+      1) download data set(around 200M, 450k data, with some cache file), unzip it and put it in data/ folder,
+           
+      2) run step 1 for pre-train, 
+           
+      3) and run step 2 for fine-tuning.
 
 2. i finish above three steps, and want to have a better performance, how can i do further. do i need to find a big dataset?
 

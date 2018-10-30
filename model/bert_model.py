@@ -212,6 +212,7 @@ def train():
     gpu_config.gpu_options.allow_growth = True
     saver = tf.train.Saver()
     save_path = config.ckpt_dir + "model.ckpt"
+    batch_size=8
     #if not os.path.exists(config.ckpt_dir):
     #    os.makedirs(config.ckpt_dir)
     with tf.Session(config=gpu_config) as sess:

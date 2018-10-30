@@ -305,6 +305,7 @@ def train():
     save_path = config.ckpt_dir + "model.ckpt"
     #if not os.path.exists(config.ckpt_dir):
     #    os.makedirs(config.ckpt_dir)
+    batch_size = 8
     with tf.Session(config=gpu_config) as sess:
         sess.run(tf.global_variables_initializer())
         if os.path.exists(config.ckpt_dir): #
