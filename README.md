@@ -83,7 +83,7 @@ MIDDLE SIZE DATASET(<a href='https://pan.baidu.com/s/1HUzBXB_-zzqv-abWZ74w2Q'>ca
 Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
 ---                          | ---                 | ---                         | -----------     
 F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58        
-F1 Score after 5 epoch       |  0.83               | 0.58                        | 0.25                           
+F1 Score after 5 epoch       |  0.58               | 0.83                        | 0.25                           
 Training Loss at beginning   |  327.9              | 81.8                        |  246.1             
 Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                 
 Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
