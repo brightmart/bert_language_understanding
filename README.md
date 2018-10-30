@@ -282,7 +282,7 @@ have to reconstruct those words from context. We call this a "masked LM" but it 
 python 3+ tensorflow 1.10
 
 ## Implementation Details
-1. what share and not share beteween pre-train and fine-tuning stages?
+1. what share and not share between pre-train and fine-tuning stages?
 
    1).basically, all of parameters of backbone network used by pre-train and fine-tuning stages are shared each other.
    
@@ -296,7 +296,7 @@ python 3+ tensorflow 1.10
    
    to make things easily, we generate sentences from documents, split them into sentences. for each sentence
    
-   we trancuate and padding it to same length, and random select a word, then replace it with [MASK], its self and a random 
+   we truncate and padding it to same length, and randomly select a word, then replace it with [MASK], its self and a random 
    
    word.
    
@@ -308,7 +308,7 @@ python 3+ tensorflow 1.10
 
 1. why we need self-attention?
 
-     self-attention a new type of network recently gain more and more attention. traditonally we use 
+     self-attention a new type of network recently gain more and more attention. traditionally we use 
 
      rnn or cnn to solve problem. however rnn has a problem in parallel, and cnn is not good at model position sensitive tasks.
 
@@ -317,13 +317,13 @@ python 3+ tensorflow 1.10
 
 2. what is multi-heads self-attention, what does q,k,v stand for? add something here.
 
-     mulit-heads self-attention is a self-attention, while it divide and project q and k into serveral different subspace,
+     mulit-heads self-attention is a self-attention, while it divide and project q and k into several different subspace,
 
      then do attention. 
 
      q stand for question, k stand for keys. for machine translation task, q is previous hidden state of decodes, k represent 
 
-     hidden states of encoder. each of element of k will compute a similiarity score with q. and then softmax will be used
+     hidden states of encoder. each of element of k will compute a similarity score with q. and then softmax will be used
 
      to do normalize score, we will get weights. finally a weighted sum is computed by using weights apply to v.
 
@@ -367,7 +367,7 @@ inside model/transform_model.py, there is a train and predict method.
 
 first you can run train() to start training, then run predict() to start prediction using trained model. 
 
-as the model is pretty big, with default hyperparamter(d_model=512, h=8,d_v=d_k=64,num_layer=6), it require lots of data before it can converage.
+as the model is pretty big, with default hyperparamter(d_model=512, h=8,d_v=d_k=64,num_layer=6), it require lots of data before it can converge.
 
 at least 10k steps is need, before loss become less than 0.1. if you want to train it fast with small
 
