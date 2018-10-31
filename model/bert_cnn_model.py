@@ -218,13 +218,10 @@ class BertCNNModel:
                 conv2 = tf.contrib.layers.batch_norm(conv2, is_training=self.is_training_flag, scope='cnn2')
                 print(i, "conv2:", conv2)
                 b2 = tf.get_variable("b2-%s" % filter_size, [self.num_filters])  # ADD 2017-06-09
-                h = tf.nn.relu(tf.nn.bias_add(conv2, b2),
-                               "relu2")  # shape:[batch_size,sequence_length - filter_size + 1,1,num_filters]. tf.nn.bias_add:adds `bias` to `value`
+                h = tf.nn.relu(tf.nn.bias_add(conv2, b2),"relu2")  # shape:[batch_size,sequence_length - filter_size + 1,1,num_filters]. tf.nn.bias_add:adds `bias` to `value`
 
                 # 3. Max-pooling
-                pooling_max = tf.squeeze(
-                    tf.nn.max_pool(h, ksize=[1, (self.total_sequence_length - filter_size * 2 + 2), 1, 1],
-                                   strides=[1, 1, 1, 1], padding='VALID', name="pool"))
+                pooling_max = tf.squeeze(tf.nn.max_pool(h, ksize=[1, (self.total_sequence_length - filter_size * 2 + 2), 1, 1],strides=[1, 1, 1, 1], padding='VALID', name="pool"))
                 # pooling_avg=tf.squeeze(tf.reduce_mean(h,axis=1)) #[batch_size,num_filters]
                 print(i, "pooling:", pooling_max)
                 # pooling=tf.concat([pooling_max,pooling_avg],axis=1) #[batch_size,num_filters*2]
