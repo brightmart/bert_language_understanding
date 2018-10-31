@@ -82,12 +82,23 @@ MIDDLE SIZE DATASET(<a href='https://pan.baidu.com/s/1HUzBXB_-zzqv-abWZ74w2Q'>ca
 
 Model                        | TextCNN(No-pretrain)| TextCNN(Pretrain-Finetuning)| Gain from pre-train 
 ---                          | ---                 | ---                         | -----------     
-F1 Score after 1 epoch       |  0.16               | 0.74                        |  0.58        
-F1 Score after 5 epoch       |  0.58               | 0.83                        | 0.25                           
-Training Loss at beginning   |  327.9              | 81.8                        |  246.1             
-Validation Loss after 1 epoch|  13.3               | 2.1                         |  11.2                 
-Validation Loss after 5 epoch|  7.0                | 1.4                         |  5.6                              
+F1 Score after 1 epoch       |  0.09               | 0.58                        |  0.49        
+F1 Score after 5 epoch       |  0.40               | 0.74                        |  0.35    
+F1 Score after 7 epoch       |  0.44               | 0.75                        |  0.31                         
+F1 Score after 35 epoch      |  0.58               | 0.75                        |  0.27                                                
+Training Loss at beginning   |  284.0              | 84.3                        |  199.7             
+Validation Loss after 1 epoch|  13.3               | 1.9                         |  11.4                 
+Validation Loss after 5 epoch|  6.7                | 1.3                         |  5.4                              
 ----------------------------------------------------------------------------------------------
+Notice: 
+
+  a.pre-train model completed training after just running 7 epoch as max epoch reached to 35. 
+
+   in fact, pre-train model start training from epoch 27 where pre-train stage ended.
+
+  c.f1 Score reported here is on validation set, an average of micro and macro of f1 score. 
+
+  d.f1 score after 35 epoch is reported on test set.
 
 SMALL SIZE DATASET(private, 100k)
 
