@@ -92,7 +92,7 @@ Validation Loss after 5 epoch|  6.7                | 1.3                        
 ----------------------------------------------------------------------------------------------
 Notice: 
 
-  a.pre-train model completed training after just running 7 epoch as max epoch reached to 35. 
+  a.fine-tuning staged completed training after just running 7 epoch as max epoch reached to 35. 
 
      in fact, pre-train model start training from epoch 27 where pre-train stage ended.
 
