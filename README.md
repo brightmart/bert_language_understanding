@@ -104,6 +104,8 @@ Notice:
   
      pre-train stage finished within 5 hours in single GPU. 
 
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/pretrain_completed.jpeg"  width="60%" height="60%" />
+
 
 SMALL SIZE DATASET(private, 100k)
 
@@ -213,9 +215,9 @@ based on multiple layer self-attetion model, then fine tuning by add a classific
 
 As BERT model is based on Transformer, currently we are working on add pretrain task to the model.
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa3.jpeg"  width="60%" height="60%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/aa3.jpeg"  width="60%" height="60%" />
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa4.jpeg"  width="65%" height="65%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/aa4.jpeg"  width="65%" height="65%" />
 
 
 Notice: 
@@ -298,9 +300,9 @@ have to reconstruct those words from context. We call this a "masked LM" but it 
     Input = [CLS] the man heading to the store [SEP] penguin [MASK] are flight ##less birds [SEP]
     Label = NotNext
     
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa1.jpeg"  width="65%" height="65%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/aa1.jpeg"  width="65%" height="65%" />
 
-<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/aa2.jpeg"  width="65%" height="65%" />
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/aa2.jpeg"  width="65%" height="65%" />
 
 
 ## Environment
