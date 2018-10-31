@@ -88,7 +88,8 @@ F1 Score after 7 epoch       |  0.44               | 0.75                       
 F1 Score after 35 epoch      |  0.58               | 0.75                        |  0.27                                                
 Training Loss at beginning   |  284.0              | 84.3                        |  199.7             
 Validation Loss after 1 epoch|  13.3               | 1.9                         |  11.4                 
-Validation Loss after 5 epoch|  6.7                | 1.3                         |  5.4                              
+Validation Loss after 5 epoch|  6.7                | 1.3                         |  5.4   
+Training time(single gpu)    |  8h                 | 2h                          |
 ----------------------------------------------------------------------------------------------
 Notice: 
 
@@ -104,8 +105,11 @@ Notice:
   
      pre-train stage finished within 5 hours in single GPU. 
 
+fine tuning after pre-train:
 <img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/pretrain_completed.jpeg"  width="60%" height="60%" />
 
+no pre-train:
+<img src="https://github.com/brightmart/bert_language_understanding/blob/master/data/img/no_pretrain.jpeg"  width="60%" height="60%" />
 
 SMALL SIZE DATASET(private, 100k)
 
