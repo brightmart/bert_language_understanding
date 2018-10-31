@@ -94,11 +94,12 @@ Notice:
 
   a.pre-train model completed training after just running 7 epoch as max epoch reached to 35. 
 
-   in fact, pre-train model start training from epoch 27 where pre-train stage ended.
+     in fact, pre-train model start training from epoch 27 where pre-train stage ended.
 
   c.f1 Score reported here is on validation set, an average of micro and macro of f1 score. 
 
   d.f1 score after 35 epoch is reported on test set.
+
 
 SMALL SIZE DATASET(private, 100k)
 
