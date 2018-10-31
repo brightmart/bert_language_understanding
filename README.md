@@ -181,6 +181,7 @@ check 'data' folder for sample data. <a href='https://pan.baidu.com/s/1HUzBXB_-z
 
 </a>with 450k 206 classes, each input is a document, average length is around 300, one or multi-label associate with input.
 
+<a href='https://ai.tencent.com/ailab/nlp/embedding.html'>download pre-train word embedding from tencent ailab</a> 
 ## Suggestion for User
 
 1. things can be easy: 
