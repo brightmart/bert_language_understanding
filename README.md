@@ -99,6 +99,10 @@ Notice:
   c.f1 Score reported here is on validation set, an average of micro and macro of f1 score. 
 
   d.f1 score after 35 epoch is reported on test set.
+  
+  e. from 450k raw documents, retrieved 2 million training data for masked language model, 
+  
+     pre-train stage finished within 5 hours in single GPU. 
 
 
 SMALL SIZE DATASET(private, 100k)
