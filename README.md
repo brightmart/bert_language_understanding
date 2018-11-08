@@ -1,4 +1,4 @@
-# bert for language understanding
+# ideas from google's bert for language understanding: pre-train TextCNN
 
 ## Table of Contents
 
@@ -425,11 +425,11 @@ it will print loss during training,  and print f1 score for each epoch during va
 
 4. need a data set for sentiment analysis or text classification in english [IMPORTANT,recruit a team member and need a merge request]
 
-5. special handle first token [cls] as input and classification [DONE]
-
-6. position embedding is not shared between with pre-train and fine-tuning yet. since here on pre-train stage length may 
+5. position embedding is not shared between with pre-train and fine-tuning yet. since here on pre-train stage length may 
 
      shorter than fine-tuning stage.
+     
+6. special handle first token [cls] as input and classification [DONE]
 
 7. pre-train with fine_tuning: need load vocabulary of tokens from pre-train stage, but labels from real task. [DONE]
 
