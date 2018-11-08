@@ -1,4 +1,6 @@
-# ideas from google's bert for language understanding: pre-train TextCNN
+# Ideas from google's bert for language understanding: 
+
+Pre-train TextCNN
 
 ## Table of Contents
 
