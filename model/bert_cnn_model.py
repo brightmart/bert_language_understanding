@@ -31,7 +31,7 @@ class BertCNNModel:
         self.decay_steps=config.decay_steps
         self.decay_rate=config.decay_rate
         self.d_k=config.d_k
-        self.d_model=config.d_model
+
         self.h=config.h
         self.d_v=config.d_v
         self.num_layer=config.num_layer
