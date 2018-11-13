@@ -16,7 +16,7 @@
  
 【session-feed方式使用bert模型;使用bert做在线预测】
 
-1.<a href='https://github.com/brightmart/bert_language_understanding/blob/master/run_classifier_predict_online.py'>简明例子</a>
+   <a href='https://github.com/brightmart/bert_language_understanding/blob/master/run_classifier_predict_online.py'>简明例子</a>
 
 【目前支持的任务类型】
 
