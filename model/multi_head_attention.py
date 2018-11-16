@@ -97,7 +97,7 @@ class MultiHeadAttention(object):
         V_heads = tf.stack(tf.split(V_s, self.h, axis=2), axis=1)               # [batch,h,sequence_length,d_v]. during implementation, d_v=d_k.
         # 2. dot product of Q,K
         dot_product=tf.matmul(Q_heads,K_heads,transpose_b=True)                 # [batch,h,sequence_length,sequence_length]
-        dot_product=dot_product*(1.0/tf.sqrt(tf.cast(self.d_model/h,tf.float32))) # [batch,h,sequence_length,sequence_length]
+        dot_product=dot_product*(1.0/tf.sqrt(tf.cast(self.d_model/self.h,tf.float32))) # [batch,h,sequence_length,sequence_length]
         # 3. add mask if it is none
         #print("scaled_dot_product_attention_batch.mask is not none?",self.mask is not None)
         if self.mask is not None:
