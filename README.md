@@ -252,9 +252,9 @@ right-to-left model, e.g.:
 
      P(store|</s>)*P(a|store </s>)*…
 
-Now you have Â two representations of each word, one left-to-right and one right-to-left, and you can concatenate them together for your downstream task.
+Now you have two representations of each word, one left-to-right and one right-to-left, and you can concatenate them together for your downstream task.
 
-But intuitively, it would be much better if we could train a single model that wasÂ deeply bidirectional.
+But intuitively, it would be much better if we could train a single model that was deeply bidirectional.
 
 It's unfortunately impossible to train a deep bidirectional model like a normal LM, because that would create cycles where words can indirectly
  
