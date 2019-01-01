@@ -408,7 +408,7 @@ data, you can use small set of hyperparmeter(d_model=128, h=8,d_v=d_k=16, num_la
 
 
 ## Multi-label Classification Task with transformer and BERT
-you can use it two solve binary classification, multi-class classification or multi-label classification problem.
+you can use it to solve binary classification, multi-class classification or multi-label classification problem.
 
 it will print loss during training,  and print f1 score for each epoch during validation.
 
