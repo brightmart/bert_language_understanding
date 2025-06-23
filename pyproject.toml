@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "bert-nlp-project"
+version = "0.1.0"
+description = "BERT-based NLP model implementation"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "model"}, {include = "*.py"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+
+[tool.poetry.scripts]
+test = "pytest:main"
+tests = "pytest:main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--cov=.",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-fail-under=0",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests", 
+    "slow: Tests that take a long time to run",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*_test.py",
+    "setup.py",
+    "*/venv/*",
+    "*/.venv/*",
+    "*/virtualenv/*",
+    "*/.tox/*",
+    "*/.pytest_cache/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
